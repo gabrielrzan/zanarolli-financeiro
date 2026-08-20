@@ -239,183 +239,109 @@ canvas{max-width:100%}
   border:none;cursor:pointer;font-size:20px;z-index:200;
   align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.3)}
 
-/* ═══════════════════════════════════════════════════
-   RESPONSIVO — tablet, celular android, iphone, ipad
-   ═══════════════════════════════════════════════════ */
 
-/* iPad Pro (≥1024px) — sidebar visível, layout normal */
-@media(min-width:1024px){
-  .menu-toggle{display:none}
-  .sidebar{position:sticky;left:0}
-  .site-header{padding-left:244px}
-  .main{padding:1.5rem 1.75rem 4rem;max-width:860px}
-}
-
-/* iPad Air / Mini (768px–1023px) — sidebar toggleable */
-@media(max-width:1023px) and (min-width:768px){
-  .layout{display:block;margin-top:64px}
-  .sidebar{position:fixed;left:-224px;top:64px;
-    height:calc(100vh - 64px);transition:left .25s ease;
-    z-index:95;box-shadow:4px 0 20px rgba(0,0,0,.15)}
-  .sidebar.open{left:0}
-  .menu-toggle{display:flex}
-  .site-header{padding-left:1.25rem}
-  .hdr-meta{display:flex;gap:.75rem}
-  .hdr-meta .hm:nth-child(3){display:none}
-  .main{padding:1.25rem 1.25rem 5rem;max-width:100%;margin-left:0}
-  .metric-grid{grid-template-columns:repeat(2,1fr);gap:8px}
-  .metric-val{font-size:18px}
-  .panel-hd{font-size:9px}
-  .tbl{font-size:11px}
-  .tbl th{font-size:9px;padding:5px 8px}
-  .tbl td{padding:5px 8px}
-  canvas{max-width:100%}
-  .chart-box{overflow-x:auto}
-}
-
-/* Celular grande (480px–767px) — layout mobile */
-@media(max-width:767px) and (min-width:480px){
-  .layout{display:block;margin-top:56px}
-  .site-header{height:56px;padding-left:1rem;padding-right:1rem}
-  .hdr-sep{display:none}
-  .hdr-meta{display:none}
-  .hdr-title{font-size:14px}
-  .sidebar{position:fixed;left:-224px;top:56px;
-    height:calc(100vh - 56px);transition:left .25s ease;
-    z-index:95;box-shadow:4px 0 20px rgba(0,0,0,.18);
-    overflow-y:auto;-webkit-overflow-scrolling:touch}
-  .sidebar.open{left:0}
-  .menu-toggle{display:flex}
-  .main{padding:1rem .85rem 5rem;max-width:100%;margin-left:0}
-  .metric-grid{grid-template-columns:repeat(2,1fr);gap:6px}
-  .metric{padding:.65rem .75rem}
-  .metric-val{font-size:16px}
-  .metric-sub{font-size:10px}
-  .panel-hd{font-size:9px;margin-bottom:.65rem}
-  .tbl{font-size:11px}
-  .tbl th{font-size:9px;padding:4px 6px}
-  .tbl td{padding:4px 6px}
-  .tbl td.r{font-size:11px}
-  /* tabelas com scroll horizontal */
-  .tbl-wrap,.chart-box{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  table{min-width:min-content}
-  /* cards em coluna */
-  [style*="grid-template-columns:1fr 1fr"]{
-    display:block!important}
-  [style*="grid-template-columns:1fr 1fr"] > div{
-    margin-bottom:.5rem}
-  .cen-tab{font-size:11px;padding:.3rem .55rem}
-  .pl{font-size:9px;padding:1px 4px}
-  canvas{max-width:100%!important;height:auto!important}
-  .countdown{flex-direction:column;gap:.5rem}
-  .wf-row{grid-template-columns:70px 1fr 60px}
-  .wf-saldo{display:none}
-  .sec-div{font-size:9px}
-}
-
-/* Celular pequeno (≤479px) — iPhone SE, Android compacto */
-@media(max-width:479px){
-  .layout{display:block;margin-top:52px}
-  .site-header{height:52px;padding:0 .75rem;gap:.5rem}
-  .hdr-sep{display:none}
-  .hdr-meta{display:none}
-  .hdr-brand .hdr-eye{display:none}
-  .hdr-title{font-size:13px}
-  .sidebar{position:fixed;left:-224px;top:52px;
-    height:calc(100vh - 52px);transition:left .25s ease;
-    z-index:95;box-shadow:4px 0 20px rgba(0,0,0,.2);
-    overflow-y:auto;-webkit-overflow-scrolling:touch;
-    width:200px}
-  .sidebar.open{left:0}
-  .menu-toggle{display:flex;padding:.35rem}
-  .sb-btn{font-size:11px;padding:.45rem .6rem}
-  .sb-label{font-size:8px}
-  .main{padding:.75rem .65rem 5rem;max-width:100%;margin-left:0}
-  .metric-grid{grid-template-columns:1fr 1fr;gap:5px}
-  .metric{padding:.55rem .65rem;border-radius:8px}
-  .metric-val{font-size:14px}
-  .metric-lbl{font-size:9px}
-  .metric-sub{font-size:9px;display:none}
-  .panel-hd{font-size:8px;margin-bottom:.5rem}
-  /* tabelas compactas com scroll */
-  .tbl{font-size:10px;min-width:320px}
-  .tbl th{font-size:8px;padding:3px 5px;white-space:nowrap}
-  .tbl td{padding:4px 5px;font-size:10px}
-  div[style*="overflow-x:auto"]{-webkit-overflow-scrolling:touch}
-  /* Forçar tabelas dentro de div com scroll */
-  section .tbl{display:block;overflow-x:auto;white-space:nowrap}
-  section .tbl thead,.tbl tbody,.tbl tr{display:table;width:100%;table-layout:auto}
-  /* Simplificar grids */
-  [style*="grid-template-columns"]{display:block!important}
-  [style*="grid-template-columns"] > div,[style*="grid-template-columns"] > canvas{
-    margin-bottom:.5rem!important;width:100%!important}
-  .cen-tab{font-size:10px;padding:.28rem .45rem;border-radius:5px}
-  .pl{font-size:8px;padding:1px 3px}
-  canvas{max-width:100%!important}
-  .chart-box{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .chart-box canvas{min-width:280px}
-  .countdown{flex-direction:column;gap:.4rem;padding:.6rem .75rem}
-  .cd-num{font-size:36px}
-  .sec-div{font-size:8px;padding:4px 8px}
-  /* overlay quando sidebar aberta */
-  .sidebar-overlay{display:block}
-  /* Remover colunas desnecessárias em tabelas */
-  .tbl .hide-mobile{display:none}
-  .wf-saldo,.wf-row .cd{display:none}
-}
-
-/* Overlay escuro ao abrir sidebar no mobile */
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);
-  z-index:94;-webkit-tap-highlight-color:transparent}
-.sidebar-overlay.visible{display:block}
-
-/* Garante scroll suave em iOS em qualquer elemento com overflow */
-*{-webkit-overflow-scrolling:touch}
-
-/* Botões com área de toque mínima de 44px (Apple HIG) */
-.sb-btn{min-height:44px}
-.cen-tab,.menu-toggle button{min-height:36px}
-button{cursor:pointer}
-
-/* Evita zoom ao focar em inputs no iOS */
-input,select,textarea{font-size:16px!important}
-
-@media print{
-  .sidebar,.site-header,.menu-toggle,.sidebar-overlay{display:none}
-  .main{padding:0;max-width:100%;margin:0}
-  .panel{display:block!important}
-}
 @media print{
   .sidebar,.site-header,.menu-toggle{display:none}
   .main{padding:0;max-width:100%}
   .panel{display:block!important}
 }
 
-/* Tabelas scrolláveis no mobile */
-.panel .tbl-outer{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:.75rem}
-@media(max-width:767px){
-  /* Gráficos em coluna no mobile */
-  [style*="grid-template-columns:1fr 1fr"]{display:flex!important;flex-direction:column!important;gap:.5rem!important}
+
+/* ─── RESPONSIVO ──────────────────────────────────────────── */
+
+/* Overlay sidebar mobile */
+.sb-overlay{display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.4);z-index:94;touch-action:none}
+.sb-overlay.on{display:block}
+
+/* ≥ 901px — desktop/iPad Pro: sidebar fixa, layout normal */
+@media(min-width:901px){
+  .menu-toggle{display:none}
+  .main{padding:1.5rem 1.75rem 4rem}
+}
+
+/* ≤ 900px — tablet / celular: sidebar vira drawer */
+@media(max-width:900px){
+  /* Header */
+  .site-header{padding:0 1rem;height:56px}
+  .hdr-sep{display:none}
+  .hdr-meta .hm:last-child{display:none}
+  .layout{margin-top:56px;min-height:calc(100vh - 56px)}
+
+  /* Sidebar drawer */
+  .sidebar{position:fixed;left:-240px;top:56px;width:240px;
+    height:calc(100vh - 56px);transition:left .22s ease;
+    z-index:95;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    box-shadow:none}
+  .sidebar.open{left:0;box-shadow:4px 0 24px rgba(0,0,0,.18)}
+  .menu-toggle{display:flex}
+
+  /* Main sem margem de sidebar */
+  .main{padding:1rem 1rem 5rem;max-width:100%}
+
   /* Métricas 2 por linha */
-  .metric-grid{grid-template-columns:1fr 1fr!important}
+  .metric-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px}
+  .metric-val{font-size:18px}
+
+  /* Tabelas: scroll horizontal no container pai */
+  .panel{overflow-x:hidden}
+  .tbl{font-size:12px}
+
+  /* Gráficos */
+  .chart-box{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  canvas{max-width:100%}
+
+  /* Tabs */
+  .cen-tab{font-size:11px;padding:.35rem .6rem}
+}
+
+/* ≤ 600px — celular */
+@media(max-width:600px){
   /* Header mais compacto */
-  .site-header{height:52px!important}
-  .layout{margin-top:52px!important}
-  .sidebar{top:52px!important;height:calc(100vh - 52px)!important}
-  /* Painéis sem padding excessivo */
-  .main{padding:.75rem .6rem 5rem!important}
-  /* Pills menores */
-  .pl{font-size:9px!important;padding:1px 4px!important}
-  /* Inputs maiores para toque */
-  button,select,input{min-height:40px}
-  .cen-tab{min-height:36px;font-size:11px}
-  /* Ocultar colunas secundárias nas tabelas */
-  .tbl .col-hide{display:none}
+  .site-header{height:52px}
+  .layout{margin-top:52px;min-height:calc(100vh - 52px)}
+  .sidebar{top:52px;height:calc(100vh - 52px)}
+  .hdr-meta{display:none}
+  .hdr-title{font-size:14px}
+
+  /* Padding menor */
+  .main{padding:.85rem .75rem 5rem}
+
+  /* Métricas 2 por linha em celular */
+  .metric-grid{grid-template-columns:repeat(2,1fr)!important;gap:6px}
+  .metric{padding:.6rem .75rem}
+  .metric-val{font-size:16px}
+  .metric-lbl{font-size:9px}
+  .metric-sub{font-size:10px}
+
+  /* Tabelas legíveis */
+  .tbl{font-size:11px}
+  .tbl th{font-size:9px;padding:4px 7px}
+  .tbl td{padding:5px 7px}
+
+  /* Scroll horizontal em containers de tabela */
+  .panel > div[style]{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+  /* Abas */
+  .cen-tab{font-size:10px;padding:.3rem .5rem}
+
+  /* Pills */
+  .pl{font-size:9px}
+
+  /* Inputs sem zoom no iOS (tamanho mínimo 16px) */
+  input,select,textarea{font-size:16px!important}
+
+  /* Botões com área mínima para toque */
+  .sb-btn{min-height:44px}
+  button{cursor:pointer}
 }
-@media(max-width:479px){
-  .metric-grid{grid-template-columns:1fr!important}
-  .hdr-eye{display:none}
+
+@media print{
+  .sidebar,.site-header,.menu-toggle,.sb-overlay{display:none}
+  .main{padding:0;max-width:100%}
+  .panel{display:block!important}
 }
+/* ─────────────────────────────────────────────────────────── */
 </style>
 </head>
 <body>
@@ -432,7 +358,7 @@ input,select,textarea{font-size:16px!important}
     <span class="hm">Semana: <strong id="hdr-semana">—</strong></span>
   </div>
 </header>
-<div class="sidebar-overlay" id="sb-overlay" onclick="toggleMenu()"></div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleMenu()"></div>
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 <div class="layout">
 <nav class="sidebar" id="sidebar">
@@ -2082,7 +2008,7 @@ function show(id, btn) {
   if (el) el.classList.add('active');
   if (btn) btn.classList.add('active');
   document.getElementById('sidebar').classList.remove('open');
-  const ov=document.getElementById('sb-overlay'); if(ov) ov.classList.remove('visible');
+  const ov=document.getElementById('sb-overlay'); if(ov) ov.classList.remove('on');
   window.scrollTo({top:0,behavior:"smooth"});
   if (id==='p00itau') { document.querySelectorAll('#p00itau .cen-panel').forEach(p=>p.classList.remove('active')); document.querySelectorAll('#p00itau .cen-tab').forEach(b=>b.classList.remove('active')); const defcc=document.getElementById('itau-cc'); if(defcc)defcc.classList.add('active'); const defbt=document.querySelector('#p00itau .cen-tab'); if(defbt)defbt.classList.add('active'); if(!charts.itauRD) loadChartJs(function(){ initItauGraficos(); initItauAgo(); }); }
   if (id==='p00nb') { document.querySelectorAll('#p00nb .cen-panel').forEach(p=>p.classList.remove('active')); document.querySelectorAll('#p00nb .cen-tab').forEach(b=>b.classList.remove('active')); const defjuca=document.getElementById('nb-juca'); if(defjuca)defjuca.classList.add('active'); const defjbt=document.querySelector('#p00nb .cen-tab'); if(defjbt)defjbt.classList.add('active'); if(!charts.nubank) loadChartJs(initNubank); }
@@ -2098,7 +2024,7 @@ function toggleMenu(){
   const sb = document.getElementById('sidebar');
   const ov = document.getElementById('sb-overlay');
   sb.classList.toggle('open');
-  if(ov) ov.classList.toggle('visible');
+  if(ov) ov.classList.toggle('on');
 }
 document.addEventListener('click', e => {
   const sb = document.getElementById('sidebar');
@@ -2106,7 +2032,7 @@ document.addEventListener('click', e => {
   const btn = document.querySelector('.menu-toggle');
   if (sb && sb.classList.contains('open') && !sb.contains(e.target) && e.target!==btn && e.target!==ov){
     sb.classList.remove('open');
-    if(ov) ov.classList.remove('visible');
+    if(ov) ov.classList.remove('on');
   }
 });
 
