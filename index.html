@@ -2398,4 +2398,233 @@ function atualizarTotalCompras06() {
 loadChartJs(initFluxoMini);
 ccRecalcular();
 </script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// SUPABASE — Camada de persistência injetada no Consolidado v4
+// Visual 100% preservado. Apenas adiciona salvamento no banco.
+// ═══════════════════════════════════════════════════════════════
+
+const _SB_URL = 'https://zvzolwyqezfzjrqydfnt.supabase.co/rest/v1';
+const _SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2em9sd3lxZXpmempycXlkZm50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NjA1MjUsImV4cCI6MjEwMzIzNjUyNX0.MxQ1uqa_zva3-NoL4OY0ftOQrPbAGIvDCCneGtAJX5I';
+const _H = {
+  'apikey': _SB_KEY,
+  'Authorization': 'Bearer ' + _SB_KEY,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
+
+const _db = {
+  get:   (t, q='')  => fetch(`${_SB_URL}/${t}?${q}`, {headers:_H}).then(r=>r.ok?r.json():null),
+  post:  (t, d)     => fetch(`${_SB_URL}/${t}`, {method:'POST',headers:_H,body:JSON.stringify(d)}).then(r=>r.ok?r.json():null),
+  patch: (t, id, d) => fetch(`${_SB_URL}/${t}?id=eq.${id}`, {method:'PATCH',headers:_H,body:JSON.stringify(d)}).then(r=>r.ok?r.json():null),
+  del:   (t, id)    => fetch(`${_SB_URL}/${t}?id=eq.${id}`, {method:'DELETE',headers:_H}).then(r=>r.ok?null:null)
+};
+
+const _brl = v => 'R$ ' + Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
+
+// ── TOAST ─────────────────────────────────────────────────────
+function _toast(msg, ok=true) {
+  let el = document.getElementById('_sb_toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = '_sb_toast';
+    el.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;background:#1a1d27;border:1px solid #2e3347;border-radius:10px;padding:.65rem 1.1rem;font-size:12px;font-weight:600;color:#eef0f6;box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(120%);transition:transform .25s;z-index:9999;max-width:300px';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.borderColor = ok ? '#22c55e' : '#ef4444';
+  el.style.color = ok ? '#4ade80' : '#f87171';
+  el.style.transform = 'translateY(0)';
+  setTimeout(() => el.style.transform = 'translateY(120%)', 3000);
+}
+
+// ── SYNC INICIAL — carrega dados do Supabase ao abrir ─────────
+async function _syncInicial() {
+  try {
+    // 1. Saldo CC — atualizar no header e simulador
+    const cc = await _db.get('conta_corrente', 'select=saldo_apos&realizado=eq.true&order=id.desc&limit=1');
+    if (cc && cc[0]) {
+      const saldo = Number(cc[0].saldo_apos);
+      // Header
+      const hdrPos = document.getElementById('hdr-posicao');
+      if (hdrPos) hdrPos.textContent = '18/08/2026';
+      // Simulador (item 10) — atualizar saldo inicial
+      const ccInput = document.getElementById('cc-input-saldo');
+      if (ccInput) { ccInput.value = saldo.toFixed(2); ccRecalcular && ccRecalcular(); }
+      const ccInicial = document.getElementById('cc-saldo-inicial');
+      if (ccInicial) ccInicial.textContent = _brl(saldo);
+    }
+
+    // 2. Investimentos — atualizar saldos CDB
+    const inv = await _db.get('investimentos', 'select=*');
+    if (inv) {
+      inv.forEach(i => {
+        // Procurar elementos com o valor do CDB e atualizar
+        const saldoFmt = Number(i.saldo).toLocaleString('pt-BR', {minimumFractionDigits:2});
+        if (i.codigo === '00.1.1.1') {
+          // CDB Juca — atualizar onde aparece 41.080,66
+          document.querySelectorAll('[data-inv-juca]').forEach(el => el.textContent = _brl(i.saldo));
+        }
+        if (i.codigo === '00.1.1.2') {
+          document.querySelectorAll('[data-inv-sitio]').forEach(el => el.textContent = _brl(i.saldo));
+        }
+      });
+    }
+
+    // 3. Contas a pagar — atualizar status visualmente
+    const contas = await _db.get('contas_pagar', 'select=*&status=eq.pago');
+    if (contas) {
+      contas.forEach(conta => {
+        // Encontrar linhas da tabela 04 pelo texto da descrição
+        document.querySelectorAll('#p04 tbody tr').forEach(tr => {
+          const txt = tr.textContent;
+          if (txt.includes(conta.descricao.substring(0,15))) {
+            const lastTd = tr.querySelector('td:last-child');
+            const chk = tr.querySelector('.item-chk');
+            if (lastTd && !lastTd.innerHTML.includes('✓ PAGO')) {
+              lastTd.innerHTML = '<span class="pl plg">✓ PAGO</span>';
+              if (chk) chk.checked = true;
+              tr.dataset.status = 'pago';
+            }
+          }
+        });
+      });
+    }
+
+    // 4. Acordos — atualizar progresso e saldo devedor
+    const acordos = await _db.get('acordos', 'select=*&status=eq.ativo');
+    if (acordos) {
+      acordos.forEach(ac => {
+        // Atualizar barra de progresso se existir
+        const pct = Math.round((ac.parcelas_pagas / ac.parcelas_total) * 100);
+        document.querySelectorAll(`[data-acord="${ac.codigo}"] .pbar`).forEach(bar => {
+          bar.style.width = pct + '%';
+        });
+      });
+    }
+
+    console.log('✓ Supabase sincronizado');
+  } catch(e) {
+    console.warn('Supabase sync:', e);
+  }
+}
+
+// ── EXTENSÃO: marcarPago() → também salva no Supabase ─────────
+const _marcarPagoOriginal = window.marcarPago;
+window.marcarPago = async function() {
+  // Executar comportamento original (atualiza visual)
+  if (_marcarPagoOriginal) _marcarPagoOriginal();
+  
+  // Coletar itens marcados e salvar no banco
+  const checados = [];
+  document.querySelectorAll('.item-chk:checked').forEach(chk => {
+    const row = chk.closest('tr');
+    if (!row) return;
+    const tds = row.querySelectorAll('td');
+    const desc = tds[0]?.textContent?.trim();
+    const val = tds[3]?.textContent?.replace(/[R$\s\.]/g,'').replace(',','.').trim();
+    if (desc) checados.push({descricao: desc, valor: parseFloat(val)||0});
+  });
+
+  for (const item of checados) {
+    try {
+      // Buscar no banco pelo início da descrição
+      const found = await _db.get('contas_pagar', `select=id,status&descricao=ilike.*${encodeURIComponent(item.descricao.substring(0,20))}*`);
+      if (found && found[0] && found[0].status !== 'pago') {
+        await _db.patch('contas_pagar', found[0].id, {
+          status: 'pago',
+          pago_em: new Date().toISOString().slice(0,10),
+          atualizado_em: new Date().toISOString()
+        });
+      }
+    } catch(e) { console.warn('Erro ao salvar conta:', e); }
+  }
+  if (checados.length) _toast(`${checados.length} conta(s) marcada(s) como paga ✓`);
+};
+
+// ── EXTENSÃO: compraConfirmar() → também salva no Supabase ────
+const _compraConfOriginal = window.compraConfirmar;
+window.compraConfirmar = async function() {
+  // Capturar valores ANTES do original limpar o form
+  const desc  = document.getElementById('cp-desc')?.value || 'Item';
+  const val   = parseFloat(document.getElementById('cp-val')?.value) || 0;
+  const cc    = document.getElementById('cp-cc')?.value || 'Casa';
+  const fonte = document.getElementById('cp-fonte')?.value || '';
+  const prio  = document.getElementById('cp-prio')?.value || 'Média';
+  const mes   = document.getElementById('cp-mes')?.value || '—';
+
+  // Executar original (atualiza visual)
+  if (_compraConfOriginal) _compraConfOriginal();
+
+  // Salvar no banco
+  try {
+    await _db.post('compras', {
+      descricao: desc, valor_estimado: val,
+      centro_custo: cc, fonte_pagadora: fonte,
+      prioridade: prio.replace('Média','Media'),
+      mes_previsto: mes, status: 'programado',
+      criado_em: new Date().toISOString()
+    });
+    _toast('Compra salva no banco ✓');
+  } catch(e) { console.warn('Erro ao salvar compra:', e); }
+};
+
+// ── EXTENSÃO: ccConfirmar() → também salva no Supabase ────────
+const _ccConfOriginal = window.ccConfirmar;
+window.ccConfirmar = async function() {
+  // Capturar valores ANTES do original limpar o form
+  const dia  = document.getElementById('cc-f-dia')?.value || '';
+  const desc = document.getElementById('cc-f-desc')?.value || 'Lançamento';
+  const tipo = document.getElementById('cc-f-tipo')?.value || 'OUTRO';
+  const val  = parseFloat(document.getElementById('cc-f-valor')?.value) || 0;
+  const cc   = document.getElementById('cc-f-cc')?.value || '';
+
+  // Executar original
+  if (_ccConfOriginal) _ccConfOriginal();
+
+  // Salvar no banco
+  if (!val) return;
+  try {
+    // Converter dia para data completa
+    const hoje = new Date();
+    const mes = String(hoje.getMonth()+1).padStart(2,'0');
+    const ano = hoje.getFullYear();
+    const dataFull = `${ano}-${mes}-${String(dia).padStart(2,'0')}`;
+    
+    await _db.post('conta_corrente', {
+      data: dataFull, descricao: desc,
+      valor: val, tipo: tipo.toUpperCase(),
+      centro_custo: cc, realizado: true,
+      criado_em: new Date().toISOString()
+    });
+    _toast('Lançamento salvo no banco ✓');
+  } catch(e) { console.warn('Erro ao salvar lançamento:', e); }
+};
+
+// ── BOTÃO SINCRONIZAR (flutuante) ─────────────────────────────
+function _addSyncBtn() {
+  const btn = document.createElement('button');
+  btn.innerHTML = '🔄';
+  btn.title = 'Sincronizar com banco de dados';
+  btn.style.cssText = 'position:fixed;bottom:1.5rem;left:1.5rem;width:40px;height:40px;border-radius:50%;background:#3b82f6;color:#fff;border:none;font-size:16px;cursor:pointer;z-index:9998;box-shadow:0 4px 12px rgba(59,130,246,.4);transition:transform .15s';
+  btn.onmouseenter = () => btn.style.transform = 'scale(1.1)';
+  btn.onmouseleave = () => btn.style.transform = 'scale(1)';
+  btn.onclick = async () => {
+    btn.innerHTML = '⏳';
+    await _syncInicial();
+    btn.innerHTML = '🔄';
+    _toast('Sincronizado com Supabase ✓');
+  };
+  document.body.appendChild(btn);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  _addSyncBtn();
+  // Sync com pequeno delay para não competir com o JS existente
+  setTimeout(_syncInicial, 800);
+});
+</script>
+
 </body></html>
