@@ -255,6 +255,22 @@ canvas{max-width:100%}
   .main{padding:0;max-width:100%}
   .panel{display:block!important}
 }
+
+/* ── PENDÊNCIAS & ALERTAS ─────────────────────────────────── */
+.btn-edit-pend {
+  background: var(--sf2); border: 1px solid var(--bd);
+  color: var(--t3); border-radius: 5px; padding: 2px 8px;
+  font-size: 11px; cursor: pointer; transition: all .15s;
+}
+.btn-edit-pend:hover { background: var(--bl); border-color: var(--bl); color: #fff; }
+
+/* ── LOGS ─────────────────────────────────────────────────── */
+.log-row-new td { animation: logFadeIn .4s ease; }
+@keyframes logFadeIn {
+  from { background: rgba(59,130,246,.15); }
+  to   { background: transparent; }
+}
+
 </style>
 </head>
 <body>
@@ -274,8 +290,9 @@ canvas{max-width:100%}
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
 <div class="layout">
 <nav class="sidebar" id="sidebar">
-  <span class="sb-label">Visão geral</span>
-  <button class="sb-btn active" onclick="show('resumo',this)"><span class="badge">★</span>Resumo &amp; Alertas</button>
+  <span class="sb-label">Visão Geral</span>
+  <button class="sb-btn active" onclick="show('resumo',this)"><span class="badge">★</span>Resumo</button>
+  <button class="sb-btn" onclick="show('pendencias',this)"><span class="badge">⚠</span>Pendências &amp; Alertas<span class="pip pip-r"></span></button>
   <hr class="sb-hr">
   <span class="sb-label">Bancos</span>
   <button class="sb-btn" onclick="show('p00nb',this)"><span class="badge">00.1</span>Nubank<span class="pip pip-g"></span></button>
@@ -304,74 +321,238 @@ canvas{max-width:100%}
   <button class="sb-btn" onclick="show('pflux',this)"><span class="badge">08</span>Fluxo de Caixa</button>
   <button class="sb-btn" onclick="show('pprem',this)"><span class="badge">09</span>Premissas</button>
   <button class="sb-btn" onclick="show('pcc',this)"><span class="badge">10</span>Simulador</button>
+  <button class="sb-btn" onclick="show('plogs',this)"><span class="badge">📋</span>Logs</button>
 </nav>
 <main class="main">
 
 <section class="panel active" id="resumo">
-<div class="panel-hd">★ Resumo executivo · 14/08/2026</div>
+<div class="panel-hd">★ Resumo executivo · <span id="resumo-posicao">18/08/2026</span></div>
 
-<div class="metric-grid">
+<!-- Métricas principais — alimentadas pelo Supabase -->
+<div class="metric-grid" id="resumo-metrics">
   <div class="metric m-gn">
     <div class="metric-lbl">Saldo Itaú CC</div>
-    <div class="metric-val" style="color:var(--gn)">R$ 13.906</div>
-    <div class="metric-sub">posição 17/08 · após aluguel Dracenas</div>
+    <div class="metric-val" style="color:var(--gn)" id="res-saldo-cc">R$ 3.048,97</div>
+    <div class="metric-sub" id="res-saldo-cc-sub">posição 18/08 · após acordos prefeitura</div>
   </div>
   <div class="metric m-bl">
     <div class="metric-lbl">CDB Juca</div>
-    <div class="metric-val" style="color:var(--bl)">R$ 41.080</div>
+    <div class="metric-val" style="color:var(--bl)" id="res-cdb-juca">R$ 41.080</div>
     <div class="metric-sub">~R$360/mês rend. · reforma Juca</div>
   </div>
   <div class="metric m-bl">
     <div class="metric-lbl">CDB Sítio</div>
-    <div class="metric-val" style="color:var(--bl)">R$ 51.823</div>
+    <div class="metric-val" style="color:var(--bl)" id="res-cdb-sitio">R$ 51.823</div>
     <div class="metric-sub">intocável · ~R$453/mês rend.</div>
   </div>
-  <div class="metric m-rd">
-    <div class="metric-lbl">A pagar urgente</div>
-    <div class="metric-val" style="color:var(--rd)">R$ 6.453</div>
-    <div class="metric-sub">Celina ago + IPTU + fatura Itaú</div>
+  <div class="metric m-rd" id="res-metric-pagar">
+    <div class="metric-lbl">A pagar · ago</div>
+    <div class="metric-val" style="color:var(--rd)" id="res-a-pagar">R$ 3.151</div>
+    <div class="metric-sub">Nubank + acordos + SAAE</div>
   </div>
   <div class="metric m-am">
-    <div class="metric-lbl">Provisão ago restante</div>
-    <div class="metric-val" style="color:var(--am)">~R$ 8.200</div>
-    <div class="metric-sub">acordos + Nubank + SAAE Juca</div>
+    <div class="metric-lbl">Projeção fim ago</div>
+    <div class="metric-val" style="color:var(--am)" id="res-projecao">~R$ −102</div>
+    <div class="metric-sub">após todos os pagamentos</div>
   </div>
   <div class="metric m-te">
-    <div class="metric-lbl">Estimado fim ago</div>
-    <div class="metric-val" style="color:var(--teal)">~R$ 14.234</div>
-    <div class="metric-sub">após todos os pagamentos do mês</div>
+    <div class="metric-lbl">CDB Total</div>
+    <div class="metric-val" style="color:var(--teal)" id="res-cdb-total">R$ 92.904</div>
+    <div class="metric-sub">Juca + Sítio</div>
   </div>
 </div>
 
-<!-- Mini fluxo visual -->
+<!-- Fluxo mensal -->
 <div class="chart-box">
-  <div class="chart-title">Fluxo mensal ago/26 → ago/27 · resultado por mês</div>
+  <div class="chart-title">Fluxo mensal ago/26 → ago/27 · resultado mês a mês</div>
   <canvas id="chartFluxo" height="80"></canvas>
 </div>
 
-<!-- Alertas financeiros -->
-<div class="wal">
-  <div class="wtt">💳 Pendências financeiras · semana 11–17/08/2026</div>
-  <div class="wi"><span class="wl"><span class="cd">05.1</span> Mensalidade Celina agosto — PAGO 17/08</span><span class="wd pl plg">✓ pago</span><span class="wv">R$ 1.952,00</span></div>
-  <div class="wi"><span class="wl"><span class="cd">02.1.3</span> IPTU Izzo 351 parc. 08 — pagar amanhã</span><span class="wd">⏳ 15/08</span><span class="wv">R$ 168,35</span></div>
-  <div class="wi"><span class="wl"><span class="cd">02.2.3</span> IPTU Izzo 369 parc. 08 — pagar amanhã (pago R$162,60 extrato)</span><span class="wd">⏳ 15/08</span><span class="wv">R$ 164,24</span></div>
-  <div class="wi"><span class="wl"><span class="cd">00.2.2.2</span> Fatura Itaú Crédito — viagem Celina</span><span class="wd">vence 17/08</span><span class="wv">R$ 2.653,99</span></div>
-  <div class="wi"><span class="wl"><span class="cd">00.1.1.2</span> Transferir rend. CDB Sítio → CC Itaú (Renata parc. 2/7)</span><span class="wd">pendente</span><span class="wv">~R$ 453</span></div>
-  <div class="wi" style="border-top:1px solid #e8c5c0;margin-top:4px;padding-top:5px;font-weight:700">
-    <span class="wl">Total urgente</span><span class="wv">R$ 6.453,83</span></div>
+<!-- Resumo de posição por imóvel -->
+<div class="sec-div">Posição por imóvel</div>
+<table class="tbl" style="font-size:11px;margin-bottom:.75rem">
+  <thead><tr><th>Imóvel</th><th>Status</th><th>Entrada mensal</th><th>Custo mensal</th><th>Resultado</th></tr></thead>
+  <tbody>
+    <tr class="pos"><td><strong>Dracenas</strong></td><td><span class="pl plg">Alugado</span></td><td style="color:var(--gn)">R$ 957,55</td><td>R$ 0</td><td style="color:var(--gn);font-weight:700">+R$ 957,55</td></tr>
+    <tr class="warn-row"><td><strong>Izzo 351</strong></td><td><span class="pl pla">Reforma</span></td><td style="color:var(--t3)">R$ 0</td><td>~R$ 510</td><td style="color:var(--rd)">−R$ 510</td></tr>
+    <tr class="warn-row"><td><strong>Izzo 369</strong></td><td><span class="pl plb">Moradia</span></td><td style="color:var(--t3)">R$ 0</td><td>~R$ 163</td><td style="color:var(--rd)">−R$ 163</td></tr>
+    <tr class="warn-row"><td><strong>Juca 116</strong></td><td><span class="pl pla">Venda</span></td><td style="color:var(--t3)">R$ 0</td><td>~R$ 869</td><td style="color:var(--rd)">−R$ 869</td></tr>
+  </tbody>
+</table>
+</section>
+
+<section class="panel" id="pendencias">
+<div class="panel-hd">⚠ Pendências &amp; Alertas · <span id="pend-data">25/08/2026</span></div>
+
+<!-- ALERTAS INTELIGENTES -->
+<div style="margin-bottom:1rem">
+  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--rd);margin-bottom:.5rem">
+    🔴 Alertas · inconsistências detectadas
+  </div>
+  <div id="alertas-dinamicos">
+    <!-- Gerado pelo JS com base nos dados do Supabase -->
+    <div class="strip sr">⚠ SAAE Izzo 351 (R$140,71) · vencida desde 01/08 — 24 dias em atraso · <em>Sugestão: pagar imediatamente para evitar corte de água</em></div>
+    <div class="strip sr">⚠ SAAE Juca (R$252,75) · vence 20/08 — verificar se foi pago · <em>Sugestão: confirmar pagamento no extrato</em></div>
+    <div class="strip sa">⚠ CDB Juca rendimento julho (~R$400) não resgatado · <em>Sugestão: resgatar e alocar em 05 Gabriel</em></div>
+    <div class="strip sa">⚠ Cartão Nubank R$2.290,73 · vence 28/08 — 3 dias · <em>Sugestão: adiantar pagamento hoje</em></div>
+    <div class="strip sa">⚠ Acordo 03.2 parc.32 (R$671,34) · vence 30/08 · sem código de barras · <em>Sugestão: gerar 2ª via no portal</em></div>
+    <div class="strip sa">⚠ Acordo 03.3 parc.33 (R$187,31) · vence 31/08 · sem código de barras · <em>Sugestão: gerar 2ª via no portal</em></div>
+  </div>
 </div>
 
-<!-- Alertas operacionais -->
-<div class="opal">
-  <div class="optt">📋 Pendências operacionais · 14/08/2026</div>
-  <div class="op-sub">Izzo 351 · regularização</div>
-  <div class="opi"><span class="opl"><span class="cd">02.1.4</span> Abrir chamado 1doc unificando CAC 8.810/2026 + protocolo 36.478/2026</span><span class="ops">pendente</span></div>
-  <div class="opi"><span class="opl"><span class="cd">02.1.4</span> Cobrar reemissão boleto no protocolo 36.478/2026 (valor correto)</span><span class="ops">pendente</span></div>
-  <div class="op-sub">Acordos prefeitura</div>
-  <div class="opi"><span class="opl"><span class="cd">03.3</span> Acordo 425312023: solicitar 12 boletos a partir 01/11/2026</span><span class="ops">pendente</span></div>
-  <div class="opi"><span class="opl"><span class="cd">03.4</span> Acordo 443782023: solicitar 12 boletos a partir 01/11/2026</span><span class="ops">pendente</span></div>
-  <div class="op-sub">IPTU Juca 2026</div>
-  <div class="opi"><span class="opl"><span class="cd">02.3.3</span> Reemitir boletos parc. 1–7 vencidos · portal imóvel 308927 · real R$4.037,59</span><span class="ops">pendente</span></div>
+<!-- PENDÊNCIAS FINANCEIRAS -->
+<div style="margin-bottom:1rem">
+  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--am);margin-bottom:.5rem">
+    🟡 Pendências financeiras
+  </div>
+  <div class="tbl-wrap">
+  <table class="tbl" id="tbl-pend-fin">
+    <thead>
+      <tr>
+        <th>CC</th>
+        <th>Descrição</th>
+        <th>Vencimento</th>
+        <th>Fonte</th>
+        <th class="r">Valor</th>
+        <th>Status</th>
+        <th style="width:80px">Ação</th>
+      </tr>
+    </thead>
+    <tbody id="pend-fin-body">
+      <tr class="warn-row" data-pend-id="pf1">
+        <td><span class="cd">00.1.2</span></td>
+        <td>Cartão Nubank · fatura ago</td>
+        <td>28/08/2026</td>
+        <td>Nubank CC</td>
+        <td class="r warn">R$ 2.290,73</td>
+        <td><span class="pl pla">⏳ pendente</span></td>
+        <td><button class="btn-edit-pend" onclick="editarPendencia('pf1')" title="Editar">✏</button></td>
+      </tr>
+      <tr class="warn-row" data-pend-id="pf2">
+        <td><span class="cd">03.2</span></td>
+        <td>Acordo 425312023 parc. 32</td>
+        <td>30/08/2026</td>
+        <td>Itaú CC direto</td>
+        <td class="r warn">R$ 671,34</td>
+        <td><span class="pl pla">⏳ pendente</span></td>
+        <td><button class="btn-edit-pend" onclick="editarPendencia('pf2')" title="Editar">✏</button></td>
+      </tr>
+      <tr class="warn-row" data-pend-id="pf3">
+        <td><span class="cd">03.3</span></td>
+        <td>Acordo 443782023 parc. 33</td>
+        <td>31/08/2026</td>
+        <td>Itaú CC direto</td>
+        <td class="r warn">R$ 187,31</td>
+        <td><span class="pl pla">⏳ pendente</span></td>
+        <td><button class="btn-edit-pend" onclick="editarPendencia('pf3')" title="Editar">✏</button></td>
+      </tr>
+      <tr class="warn-row" data-pend-id="pf4">
+        <td><span class="cd">05.3</span></td>
+        <td>Regularize 10/10</td>
+        <td>set/26</td>
+        <td>Itaú CC direto</td>
+        <td class="r warn">R$ 387,48</td>
+        <td><span class="pl pla">⏳ pendente</span></td>
+        <td><button class="btn-edit-pend" onclick="editarPendencia('pf4')" title="Editar">✏</button></td>
+      </tr>
+      <tr class="warn-row" data-pend-id="pf5">
+        <td><span class="cd">05.7</span></td>
+        <td>Passagens retorno Celina + Gabriel</td>
+        <td>28/08/2026</td>
+        <td>Nubank Cartão</td>
+        <td class="r warn">R$ 523,47</td>
+        <td><span class="pl pla">⏳ pendente</span></td>
+        <td><button class="btn-edit-pend" onclick="editarPendencia('pf5')" title="Editar">✏</button></td>
+      </tr>
+      <tr class="warn-row" data-pend-id="pf6">
+        <td><span class="cd">02.1.1</span></td>
+        <td>SAAE Izzo 351 · água mat. 2540-2</td>
+        <td>01/08/2026</td>
+        <td>Itaú CC direto</td>
+        <td class="r warn">R$ 140,71</td>
+        <td><span class="pl plr">⚠ vencida</span></td>
+        <td><button class="btn-edit-pend" onclick="editarPendencia('pf6')" title="Editar">✏</button></td>
+      </tr>
+      <tr class="warn-row" data-pend-id="pf7">
+        <td><span class="cd">02.3.1</span></td>
+        <td>SAAE Juca · água mat. 38933-1</td>
+        <td>20/08/2026</td>
+        <td>Itaú CC direto</td>
+        <td class="r warn">R$ 252,75</td>
+        <td><span class="pl pla">⏳ pendente</span></td>
+        <td><button class="btn-edit-pend" onclick="editarPendencia('pf7')" title="Editar">✏</button></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- PENDÊNCIAS OPERACIONAIS -->
+<div>
+  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--bl);margin-bottom:.5rem">
+    🔵 Pendências operacionais
+  </div>
+  <div class="opal">
+    <div class="optt">📋 Ações necessárias · 25/08/2026</div>
+    <div class="op-sub">Izzo 351 · regularização</div>
+    <div class="opi"><span class="opl"><span class="cd">02.1.4</span> Abrir chamado 1doc unificando CAC 8.810/2026 + protocolo 36.478/2026</span><span class="ops">pendente</span></div>
+    <div class="opi"><span class="opl"><span class="cd">02.1.4</span> Cobrar reemissão boleto no protocolo 36.478/2026 (valor correto)</span><span class="ops">pendente</span></div>
+    <div class="op-sub">Acordos prefeitura</div>
+    <div class="opi"><span class="opl"><span class="cd">03.2</span> Acordo 425312023: gerar 2ª via parc. 32 no portal prefeitura</span><span class="ops">urgente</span></div>
+    <div class="opi"><span class="opl"><span class="cd">03.3</span> Acordo 443782023: gerar 2ª via parc. 33 no portal prefeitura</span><span class="ops">urgente</span></div>
+    <div class="opi"><span class="opl"><span class="cd">03.2</span> Solicitar boletos 36+ via 1DOC a partir de nov/2026</span><span class="ops">pendente</span></div>
+    <div class="opi"><span class="opl"><span class="cd">03.3</span> Solicitar boletos 37+ via 1DOC a partir de nov/2026</span><span class="ops">pendente</span></div>
+    <div class="op-sub">Izzo 351 · CDB Sítio</div>
+    <div class="opi"><span class="opl"><span class="cd">00.1.1.2</span> Transferir rend. CDB Sítio (~R$453) → CC Itaú para Renata 3/7 set/26</span><span class="ops">urgente</span></div>
+    <div class="opi"><span class="opl"><span class="cd">00.1.1.1</span> Resgatar rend. CDB Juca julho (~R$400) → alocar em 05 Gabriel</span><span class="ops">pendente</span></div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR PENDÊNCIA -->
+<div id="modal-pend" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center">
+  <div style="background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:1.5rem;width:min(480px,92vw);max-height:90vh;overflow-y:auto">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:1rem">
+      ✏ Editar pendência
+    </div>
+    <div style="display:grid;gap:.65rem">
+      <div>
+        <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Descrição</label>
+        <input id="pend-edit-desc" type="text" style="width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.4rem .6rem;color:var(--t1);font-size:12px">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem">
+        <div>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Valor (R$)</label>
+          <input id="pend-edit-val" type="number" step="0.01" style="width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.4rem .6rem;color:var(--t1);font-size:12px">
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Vencimento</label>
+          <input id="pend-edit-venc" type="text" style="width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.4rem .6rem;color:var(--t1);font-size:12px">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem">
+        <div>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Centro de Custo</label>
+          <input id="pend-edit-cc" type="text" style="width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.4rem .6rem;color:var(--t1);font-size:12px">
+        </div>
+        <div>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Fonte Pagadora</label>
+          <input id="pend-edit-fonte" type="text" style="width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.4rem .6rem;color:var(--t1);font-size:12px">
+        </div>
+      </div>
+      <div>
+        <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Status</label>
+        <select id="pend-edit-status" style="width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.4rem .6rem;color:var(--t1);font-size:12px">
+          <option value="pendente">⏳ Pendente</option>
+          <option value="pago">✓ Pago</option>
+          <option value="vencido">⚠ Vencido</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-top:1rem;justify-content:flex-end">
+      <button onclick="fecharModalPend()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:7px;padding:.4rem .9rem;font-size:11px;cursor:pointer">Cancelar</button>
+      <button onclick="salvarPendencia()" style="background:var(--bl);border:none;color:#fff;border-radius:7px;padding:.4rem .9rem;font-size:11px;font-weight:600;cursor:pointer">Salvar no banco</button>
+    </div>
+  </div>
 </div>
 </section>
 
@@ -1830,6 +2011,35 @@ canvas{max-width:100%}
 </div>
 </section>
 
+<section class="panel" id="plogs">
+<div class="panel-hd">📋 Logs · rastreabilidade das alterações</div>
+
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+  <div style="font-size:11px;color:var(--t3)">Todas as alterações salvas no banco de dados aparecem aqui automaticamente.</div>
+  <button onclick="limparLogsVisuais()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--t3);border-radius:6px;padding:.3rem .7rem;font-size:10px;cursor:pointer">Limpar visualização</button>
+</div>
+
+<div class="tbl-wrap">
+<table class="tbl" id="tbl-logs">
+  <thead>
+    <tr>
+      <th style="width:140px">Data/Hora</th>
+      <th>Painel</th>
+      <th>Campo alterado</th>
+      <th>Valor anterior</th>
+      <th>Novo valor</th>
+      <th>Usuário</th>
+    </tr>
+  </thead>
+  <tbody id="logs-tbody">
+    <tr><td colspan="6" style="text-align:center;color:var(--t3);padding:1.5rem">
+      Nenhuma alteração registrada ainda. As ações realizadas aparecerão aqui.
+    </td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
 
 <section class="panel" id="p06">
 <div class="panel-hd">06 — Compras · programação de itens</div>
@@ -2625,6 +2835,136 @@ document.addEventListener('DOMContentLoaded', () => {
   // Sync com pequeno delay para não competir com o JS existente
   setTimeout(_syncInicial, 800);
 });
+</script>
+
+
+<script>
+// ── PENDÊNCIAS & ALERTAS ──────────────────────────────────────
+let _pendAtual = null;
+
+function editarPendencia(id) {
+  const row = document.querySelector(`[data-pend-id="${id}"]`);
+  if (!row) return;
+  const tds = row.querySelectorAll('td');
+  _pendAtual = { id, row };
+  document.getElementById('pend-edit-desc').value  = tds[1]?.textContent?.trim() || '';
+  document.getElementById('pend-edit-val').value   = tds[4]?.textContent?.replace(/[R$\s\.]/g,'').replace(',','.').trim() || '';
+  document.getElementById('pend-edit-venc').value  = tds[2]?.textContent?.trim() || '';
+  document.getElementById('pend-edit-cc').value    = tds[0]?.textContent?.trim() || '';
+  document.getElementById('pend-edit-fonte').value = tds[3]?.textContent?.trim() || '';
+  const statusEl = tds[5]?.querySelector('span');
+  const statusVal = statusEl?.className?.includes('plr') ? 'vencido' :
+                    statusEl?.className?.includes('plg') ? 'pago' : 'pendente';
+  document.getElementById('pend-edit-status').value = statusVal;
+  const modal = document.getElementById('modal-pend');
+  modal.style.display = 'flex';
+}
+
+function fecharModalPend() {
+  document.getElementById('modal-pend').style.display = 'none';
+  _pendAtual = null;
+}
+
+async function salvarPendencia() {
+  if (!_pendAtual) return;
+  const desc   = document.getElementById('pend-edit-desc').value;
+  const val    = parseFloat(document.getElementById('pend-edit-val').value) || 0;
+  const venc   = document.getElementById('pend-edit-venc').value;
+  const cc     = document.getElementById('pend-edit-cc').value;
+  const fonte  = document.getElementById('pend-edit-fonte').value;
+  const status = document.getElementById('pend-edit-status').value;
+
+  // Atualizar visual na tabela
+  const row = _pendAtual.row;
+  const tds = row.querySelectorAll('td');
+  const valAnterior = tds[4]?.textContent?.trim();
+  tds[1].textContent = desc;
+  tds[2].textContent = venc;
+  tds[3].textContent = fonte;
+  tds[4].innerHTML = `<span class="${status === 'pago' ? '' : 'warn'}">${'R$ ' + val.toLocaleString('pt-BR',{minimumFractionDigits:2})}</span>`;
+  
+  const statusClasses = { pago:'pl plg', pendente:'pl pla', vencido:'pl plr' };
+  const statusLabels  = { pago:'✓ pago', pendente:'⏳ pendente', vencido:'⚠ vencida' };
+  tds[5].innerHTML = `<span class="${statusClasses[status]}">${statusLabels[status]}</span>`;
+
+  fecharModalPend();
+
+  // Salvar no banco (via _db injetado pelo Supabase)
+  if (typeof _db !== 'undefined') {
+    try {
+      const found = await _db.get('contas_pagar', `select=id&descricao=ilike.*${encodeURIComponent(desc.substring(0,15))}*`);
+      if (found && found[0]) {
+        await _db.patch('contas_pagar', found[0].id, {
+          descricao: desc, valor: val, vencimento: venc,
+          centro_custo: cc, fonte_pagadora: fonte, status,
+          atualizado_em: new Date().toISOString()
+        });
+      }
+    } catch(e) { console.warn('Erro ao salvar:', e); }
+  }
+
+  // Registrar no log
+  _registrarLog('04 Pendências', 'Valor', valAnterior, 'R$ ' + val.toLocaleString('pt-BR',{minimumFractionDigits:2}), desc);
+}
+
+// Fechar modal clicando fora
+document.addEventListener('click', e => {
+  const modal = document.getElementById('modal-pend');
+  if (modal && modal.style.display === 'flex' && e.target === modal) fecharModalPend();
+});
+
+// ── LOGS ─────────────────────────────────────────────────────
+const _logs = [];
+
+function _registrarLog(painel, campo, anterior, novo, descricao='') {
+  const agora = new Date();
+  const data  = agora.toLocaleDateString('pt-BR');
+  const hora  = agora.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const entry = { data, hora, painel, campo, anterior, novo, descricao };
+  _logs.unshift(entry); // mais recente primeiro
+
+  // Atualizar tabela de logs
+  const tbody = document.getElementById('logs-tbody');
+  if (!tbody) return;
+  if (tbody.querySelector('[colspan]')) tbody.innerHTML = ''; // remover placeholder
+
+  const tr = document.createElement('tr');
+  tr.className = 'log-row-new';
+  tr.innerHTML = `
+    <td style="white-space:nowrap;font-size:10px;color:var(--t3)">${data} ${hora}</td>
+    <td><span class="pl plb" style="font-size:9px">${painel}</span></td>
+    <td style="font-size:11px">${campo}${descricao ? ' · <span style="color:var(--t3)">' + descricao + '</span>' : ''}</td>
+    <td style="font-size:11px;color:var(--t3)">${anterior || '—'}</td>
+    <td style="font-size:11px;color:var(--gn);font-weight:600">${novo}</td>
+    <td style="font-size:10px;color:var(--t3)">Gabriel/Thais</td>
+  `;
+  tbody.insertBefore(tr, tbody.firstChild);
+
+  // Salvar log no Supabase se disponível
+  if (typeof _db !== 'undefined') {
+    _db.post('logs', {
+      painel, campo, valor_anterior: anterior, valor_novo: novo,
+      descricao, criado_em: new Date().toISOString()
+    }).catch(() => {}); // silencioso — logs não bloqueiam
+  }
+}
+
+function limparLogsVisuais() {
+  const tbody = document.getElementById('logs-tbody');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--t3);padding:1.5rem">Log limpo. Novas alterações aparecerão aqui.</td></tr>';
+}
+
+// ── HEADER DINÂMICO ───────────────────────────────────────────
+// Atualizar "Posição:" no header quando um painel com data for atualizado
+function _atualizarPosicao(data) {
+  const el = document.getElementById('hdr-posicao');
+  if (el) el.textContent = data;
+  const el2 = document.getElementById('resumo-posicao');
+  if (el2) el2.textContent = data;
+  const el3 = document.getElementById('pend-data');
+  if (el3) el3.textContent = data;
+  _registrarLog('Header', 'Posição data', el?.textContent, data);
+}
 </script>
 
 </body></html>
