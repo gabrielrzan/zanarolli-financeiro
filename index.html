@@ -390,8 +390,7 @@ body.tema-claro #bottom-nav { background:#f0f2f8; border-color:#d0d5e8; }
 <div id="tela-login" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center">
   <div style="background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:2rem;width:min(380px,92vw);box-shadow:0 24px 64px rgba(0,0,0,.5)">
     <div style="text-align:center;margin-bottom:1.5rem">
-      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.35rem">Planejamento financeiro familiar</div>
-      <div style="font-size:20px;font-weight:700;color:var(--t1)">Consolidado Zanarolli</div>
+      <div style="font-size:22px;font-weight:700;color:var(--t1)">Sistema de Gestão</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:.75rem">
       <div>
@@ -414,9 +413,13 @@ body.tema-claro #bottom-nav { background:#f0f2f8; border-color:#d0d5e8; }
         onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='var(--bl)'">
         Entrar
       </button>
+      <button onclick="esqueceuSenha()"
+        style="background:none;border:none;color:var(--t3);font-size:11px;cursor:pointer;padding:.25rem;text-decoration:underline;text-underline-offset:2px;margin-top:.15rem">
+        Esqueci a senha
+      </button>
     </div>
     <div style="text-align:center;margin-top:1rem;font-size:10px;color:var(--t3)">
-      Acesso restrito · família Zanarolli
+      Acesso Restrito
     </div>
   </div>
 </div>
@@ -4173,6 +4176,53 @@ async function adicionarPendOp(){
   _registrarLog('Pendências Op.', 'Nova tarefa', '-', desc);
   _toast2('Tarefa adicionada ✓');
   _carregarPendenciasOperacionais();
+}
+
+
+// ── ESQUECI A SENHA ───────────────────────────────────────────
+function esqueceuSenha(){
+  const email = document.getElementById('login-email')?.value?.toLowerCase()?.trim();
+  const erro = document.getElementById('login-erro');
+
+  if(!email){
+    if(erro){ erro.textContent = 'Digite seu email acima para receber o link de recuperação.'; erro.style.display='block'; }
+    return;
+  }
+
+  const user = _USUARIOS[email];
+  if(!user){
+    if(erro){ erro.textContent = 'Email não encontrado. Verifique o endereço digitado.'; erro.style.display='block'; }
+    return;
+  }
+
+  // Gerar link de recuperação (abre Gmail com instruções para Gabriel redefinir)
+  const adminEmail = 'zanarolli.gabriel@gmail.com';
+  const subject = encodeURIComponent('Sistema de Gestão — Solicitação de redefinição de senha');
+  const body = encodeURIComponent(
+    `Olá Gabriel,
+
+` +
+    `O usuário ${user.nome} (${email}) solicitou redefinição de senha no Sistema de Gestão.
+
+` +
+    `Por favor, acesse o painel de usuários e redefina a senha para ${user.nome}.
+
+` +
+    `Em seguida, envie a nova senha diretamente para: ${email}
+
+` +
+    `Sistema de Gestão · Família Zanarolli`
+  );
+
+  window.open(`mailto:${adminEmail}?subject=${subject}&body=${body}`);
+
+  if(erro){
+    erro.style.background = 'rgba(34,197,94,.1)';
+    erro.style.borderColor = 'var(--gn)';
+    erro.style.color = 'var(--gn)';
+    erro.textContent = `Solicitação enviada para o administrador. Aguarde o contato de Gabriel.`;
+    erro.style.display = 'block';
+  }
 }
 
 </body></html>
