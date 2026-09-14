@@ -380,6 +380,163 @@ body.tema-claro #bottom-nav { background:#f0f2f8; border-color:#d0d5e8; }
   .sb-label,.sb-btn span:not(.badge),.pip{display:inline}
 }
 
+
+/* ── HEADER BUSCA VISÍVEL ───────────────────────────────────── */
+.hdr-search {
+  display:flex;align-items:center;
+  background:var(--sf2);border:1px solid var(--bd);
+  border-radius:8px;padding:0 .6rem;gap:.4rem;
+  transition:border-color .15s;flex:1;max-width:260px;
+}
+.hdr-search:focus-within { border-color:var(--bl); }
+.hdr-search input {
+  background:none;border:none;color:var(--t1);font-size:12px;
+  outline:none;width:100%;padding:.4rem 0;
+}
+.hdr-search input::placeholder { color:var(--t3); }
+.hdr-search-icon { color:var(--t3);font-size:13px;flex-shrink:0; }
+
+/* ── TEMA CLARO — contraste real ───────────────────────────── */
+body.tema-claro {
+  --bg:#eef1f8;--sf:#ffffff;--sf2:#e4e8f5;--bd:#c5ccde;
+  --t1:#111827;--t2:#374151;--t3:#6b7280;
+  --gn:#16a34a;--gb:#dcfce7;--rd:#dc2626;--rb:#fee2e2;
+  --am:#d97706;--ab:#fef3c7;--bl:#2563eb;--bb:#dbeafe;
+  --pp:#7c3aed;--teal:#0d9488;
+}
+body.tema-claro .sidebar,
+body.tema-claro #bottom-nav,
+body.tema-claro .hdr { background:#dde3f0;border-color:#c5ccde; }
+body.tema-claro .hdr-search { background:#f0f2fa;border-color:#c5ccde; }
+body.tema-claro .sb-btn { color:var(--t2); }
+body.tema-claro .sb-btn:hover,
+body.tema-claro .sb-btn.active { background:#c8d0e8;color:var(--t1); }
+body.tema-claro .tbl th { background:#e4e8f5; }
+body.tema-claro .metric { background:#fff;border-color:#c5ccde; }
+.tema-btn-ativo { box-shadow:0 0 0 2px var(--bl)!important; }
+
+/* ── MENU USUÁRIO DROPDOWN ──────────────────────────────────── */
+#user-menu-btn {
+  display:flex;align-items:center;gap:.4rem;
+  background:var(--sf2);border:1px solid var(--bd);
+  border-radius:8px;padding:.3rem .65rem;cursor:pointer;
+  transition:all .15s;flex-shrink:0;
+}
+#user-menu-btn:hover { border-color:var(--bl);background:var(--bb); }
+#user-menu-btn .user-nome { font-size:11px;font-weight:600;color:var(--t1); }
+#user-menu-btn .user-cargo { font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em; }
+#user-menu-btn .user-avatar {
+  width:26px;height:26px;border-radius:50%;
+  background:var(--bl);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;flex-shrink:0;
+}
+
+.user-dropdown {
+  display:none;position:absolute;right:0;top:calc(100% + 6px);
+  width:200px;background:var(--sf);border:1px solid var(--bd);
+  border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.3);
+  z-index:200;overflow:hidden;
+}
+.user-dropdown.open { display:block; }
+.user-dropdown-header {
+  padding:.65rem .85rem;background:var(--bl);
+}
+.user-dropdown-header .ud-nome { font-size:13px;font-weight:700;color:#fff; }
+.user-dropdown-header .ud-papel { font-size:9px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.06em; }
+.user-dropdown-sep { height:1px;background:var(--bd);margin:0; }
+.user-dropdown-item {
+  display:flex;align-items:center;gap:.55rem;
+  padding:.55rem .85rem;font-size:12px;color:var(--t2);
+  cursor:pointer;transition:all .15s;border:none;
+  background:none;width:100%;text-align:left;
+}
+.user-dropdown-item:hover { background:var(--sf2);color:var(--t1); }
+.user-dropdown-item.danger:hover { background:var(--rb);color:var(--rd); }
+.user-dropdown-item .ud-icon { font-size:14px;width:20px;text-align:center;flex-shrink:0; }
+
+/* ── MODAL GENÉRICO ────────────────────────────────────────── */
+.modal-overlay {
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.55);z-index:300;
+  align-items:center;justify-content:center;padding:1rem;
+}
+.modal-overlay.open { display:flex; }
+.modal-box {
+  background:var(--sf);border:1px solid var(--bd);
+  border-radius:14px;width:min(560px,96vw);
+  max-height:88vh;overflow-y:auto;
+  box-shadow:0 24px 64px rgba(0,0,0,.4);
+}
+.modal-hd {
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.25rem;border-bottom:1px solid var(--bd);
+  position:sticky;top:0;background:var(--sf);z-index:1;
+}
+.modal-hd-title { font-size:13px;font-weight:700;color:var(--t1); }
+.modal-close {
+  background:none;border:none;color:var(--t3);
+  font-size:18px;cursor:pointer;padding:2px 6px;border-radius:5px;
+}
+.modal-close:hover { background:var(--sf2);color:var(--t1); }
+.modal-body { padding:1.25rem; }
+.modal-footer {
+  padding:.85rem 1.25rem;border-top:1px solid var(--bd);
+  display:flex;justify-content:flex-end;gap:.5rem;
+  position:sticky;bottom:0;background:var(--sf);
+}
+
+/* ── FORM FIELDS ────────────────────────────────────────────── */
+.field-group { display:flex;flex-direction:column;gap:3px;margin-bottom:.75rem; }
+.field-label { font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em; }
+.field-input {
+  background:var(--bg);border:1px solid var(--bd);border-radius:7px;
+  padding:.45rem .7rem;color:var(--t1);font-size:12px;
+  font-family:var(--font);transition:border-color .15s;width:100%;
+}
+.field-input:focus { outline:none;border-color:var(--bl); }
+select.field-input { cursor:pointer; }
+.field-grid-2 { display:grid;grid-template-columns:1fr 1fr;gap:.65rem; }
+
+/* ── PERMISSÕES MATRIZ ──────────────────────────────────────── */
+.perm-table { width:100%;border-collapse:collapse;font-size:11px; }
+.perm-table th {
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--t3);padding:6px 8px;border-bottom:1px solid var(--bd);
+  text-align:center;background:var(--sf);position:sticky;top:0;
+}
+.perm-table th:first-child { text-align:left;min-width:140px; }
+.perm-table td { padding:6px 8px;border-bottom:1px solid var(--bd);text-align:center; }
+.perm-table tr:hover td { background:var(--sf2); }
+.perm-toggle {
+  width:28px;height:16px;border-radius:8px;border:none;cursor:pointer;
+  transition:all .2s;position:relative;flex-shrink:0;
+}
+.perm-toggle.on { background:var(--bl); }
+.perm-toggle.off { background:var(--bd); }
+.perm-toggle::after {
+  content:'';position:absolute;top:2px;width:12px;height:12px;
+  border-radius:50%;background:#fff;transition:left .2s;
+}
+.perm-toggle.on::after { left:14px; }
+.perm-toggle.off::after { left:2px; }
+.perm-section { font-size:9px;font-weight:700;color:var(--t3);
+  text-transform:uppercase;letter-spacing:.08em;padding:8px 8px 4px;
+  background:var(--sf2);border-bottom:1px solid var(--bd); }
+
+/* ── STATUS BADGE ───────────────────────────────────────────── */
+.badge-ativo { background:rgba(34,197,94,.15);color:#4ade80;border-radius:4px;padding:2px 7px;font-size:9px;font-weight:700;text-transform:uppercase; }
+.badge-inativo { background:rgba(239,68,68,.12);color:#f87171;border-radius:4px;padding:2px 7px;font-size:9px;font-weight:700;text-transform:uppercase; }
+
+/* ── BUSCA RESULTADOS ───────────────────────────────────────── */
+#busca-resultados-panel {
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  background:var(--sf);border:1px solid var(--bd);border-radius:10px;
+  box-shadow:0 8px 32px rgba(0,0,0,.3);z-index:200;
+  max-height:280px;overflow-y:auto;display:none;
+}
+#busca-resultados-panel.open { display:block; }
+
 </style>
 </head>
 
@@ -424,31 +581,73 @@ body.tema-claro #bottom-nav { background:#f0f2f8; border-color:#d0d5e8; }
   </div>
 </div>
 
-<div id="app-conteudo" style="display:none"><header class="site-header">
-  <div class="hdr-brand">
-    <div class="hdr-eye">Planejamento financeiro familiar</div>
-    <div class="hdr-title">Consolidado Zanarolli</div>
+<div id="app-conteudo" style="display:none"><header class="site-header" style="position:fixed;top:0;left:0;right:0;height:56px;background:#0a0d14;border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 1rem;gap:.75rem;z-index:100">
+
+  <!-- Hamburguer -->
+  <button onclick="toggleMenu()" style="background:none;border:none;color:var(--t2);width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;font-size:18px;flex-shrink:0" onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background='none'">☰</button>
+
+  <!-- Brand -->
+  <div style="display:flex;flex-direction:column;flex-shrink:0">
+    <div style="font-size:14px;font-weight:700;color:var(--t1);line-height:1.1">Sistema de Gestão</div>
+    <div style="font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.08em" id="hdr-posicao-wrap">Posição: <span id="hdr-posicao">—</span></div>
   </div>
-  <div class="hdr-sep"></div>
-  <div class="hdr-meta">
-    <span class="hm">Posição: <strong id="hdr-posicao">18/08/2026</strong></span>
-    <span class="hm hdr-hide-sm">Projeção: <strong>ago/26 → ago/27</strong></span>
+
+  <!-- Busca visível -->
+  <div style="flex:1;max-width:280px;position:relative" id="busca-wrap">
+    <div class="hdr-search">
+      <input id="busca-input" type="text" placeholder="Buscar em todos os painéis..."
+        oninput="executarBusca(this.value)"
+        onfocus="document.getElementById('busca-resultados-panel').classList.add('open')"
+        onblur="setTimeout(()=>document.getElementById('busca-resultados-panel').classList.remove('open'),200)">
+      <span class="hdr-search-icon">🔍</span>
+    </div>
+    <div id="busca-resultados-panel"></div>
   </div>
-  <div style="display:flex;align-items:center;gap:.4rem;flex-shrink:0;margin-left:auto">
-    <div style="position:relative" id="busca-wrap">
-      <button onclick="toggleBusca()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:7px;padding:.3rem .55rem;font-size:13px;cursor:pointer" title="Buscar">🔍</button>
-      <div id="busca-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 6px);width:min(300px,90vw);background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:.5rem;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.4)">
-        <input id="busca-input" type="text" placeholder="Buscar em todos os painéis..."
-          style="width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.4rem .6rem;color:var(--t1);font-size:12px;outline:none"
-          oninput="executarBusca(this.value)">
-        <div id="busca-resultados" style="margin-top:.4rem;max-height:220px;overflow-y:auto;font-size:11px"></div>
+
+  <div style="margin-left:auto;display:flex;align-items:center;gap:.5rem">
+
+    <!-- Toggle tema -->
+    <button onclick="toggleTema()" id="btn-tema"
+      style="background:var(--sf2);border:1px solid var(--bd);border-radius:8px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:all .15s;flex-shrink:0"
+      title="Alternar tema">🌙</button>
+
+    <!-- Menu usuário -->
+    <div style="position:relative" id="user-menu-wrap">
+      <button id="user-menu-btn" onclick="toggleUserMenu()">
+        <div class="user-avatar" id="user-avatar">G</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-start">
+          <span class="user-nome" id="hdr-usuario-nome">—</span>
+          <span class="user-cargo" id="hdr-usuario-cargo">—</span>
+        </div>
+        <span style="color:var(--t3);font-size:10px">▾</span>
+      </button>
+
+      <!-- Dropdown -->
+      <div class="user-dropdown" id="user-dropdown">
+        <div class="user-dropdown-header">
+          <div class="ud-nome" id="ud-nome">—</div>
+          <div class="ud-papel" id="ud-papel">—</div>
+        </div>
+        <div class="user-dropdown-sep"></div>
+        <button class="user-dropdown-item" onclick="abrirConfiguracoes();toggleUserMenu()">
+          <span class="ud-icon">⚙️</span>Configurações
+        </button>
+        <button class="user-dropdown-item" onclick="abrirUsuarios();toggleUserMenu()">
+          <span class="ud-icon">👥</span>Usuários
+        </button>
+        <button class="user-dropdown-item" onclick="abrirGrupos();toggleUserMenu()">
+          <span class="ud-icon">🏷️</span>Grupos
+        </button>
+        <button class="user-dropdown-item" onclick="abrirPermissoes();toggleUserMenu()">
+          <span class="ud-icon">🔐</span>Permissões
+        </button>
+        <div class="user-dropdown-sep"></div>
+        <button class="user-dropdown-item danger" onclick="fazerLogout();toggleUserMenu()">
+          <span class="ud-icon">↩️</span>Sair
+        </button>
       </div>
     </div>
-    <button onclick="toggleTema()" id="btn-tema" style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:7px;padding:.3rem .55rem;font-size:13px;cursor:pointer" title="Modo claro/escuro">🌙</button>
-    <div id="hdr-usuario" style="display:none;align-items:center;gap:.35rem">
-      <span id="hdr-usuario-nome" style="font-size:10px;color:var(--t2);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
-      <button onclick="fazerLogout()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--t3);border-radius:6px;padding:2px 6px;font-size:10px;cursor:pointer">Sair</button>
-    </div>
+
   </div>
 </header>
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
@@ -3334,6 +3533,8 @@ function _iniciarApp(){
 
   // Carregar painel 02.5
   _carregarApartamento();
+  // Atualizar header com dados do usuário
+  _atualizarHeaderUsuario();
   // Mostrar botões admin
   setTimeout(_mostrarBotoesAdmin, 400);
   // Adicionar card Gabriel no Resumo
@@ -4224,5 +4425,668 @@ function esqueceuSenha(){
     erro.style.display = 'block';
   }
 }
+
+
+<!-- ══ MODAL CONFIGURAÇÕES ══════════════════════════════════ -->
+<div class="modal-overlay" id="modal-config">
+  <div class="modal-box" style="width:min(440px,96vw)">
+    <div class="modal-hd">
+      <span class="modal-hd-title">⚙️ Configurações</span>
+      <button class="modal-close" onclick="fecharModal('modal-config')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.65rem">Aparência</div>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+        <button onclick="setTema('escuro',this)" id="cfg-tema-escuro"
+          style="flex:1;background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:.6rem;font-size:11px;cursor:pointer;color:var(--t1)">
+          🌙 Modo Escuro
+        </button>
+        <button onclick="setTema('claro',this)" id="cfg-tema-claro"
+          style="flex:1;background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:.6rem;font-size:11px;cursor:pointer;color:var(--t1)">
+          ☀️ Modo Claro
+        </button>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.65rem">Tamanho da fonte</div>
+      <div style="display:flex;gap:.5rem;margin-bottom:1rem">
+        <button onclick="setFonte('pequeno')" style="flex:1;background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:.5rem;font-size:10px;cursor:pointer;color:var(--t1)">Pequeno</button>
+        <button onclick="setFonte('medio')" style="flex:1;background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:.5rem;font-size:12px;cursor:pointer;color:var(--t1)">Médio</button>
+        <button onclick="setFonte('grande')" style="flex:1;background:var(--sf2);border:1px solid var(--bd);border-radius:8px;padding:.5rem;font-size:14px;cursor:pointer;color:var(--t1)">Grande</button>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.65rem">Notificações</div>
+      <div class="field-group">
+        <label class="field-label">Email para alertas</label>
+        <input id="cfg-email-alertas" type="email" class="field-input" placeholder="seu@email.com">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Dias de antecedência para notificar</label>
+        <select id="cfg-dias-antecedencia" class="field-input">
+          <option value="1">1 dia antes</option>
+          <option value="3" selected>3 dias antes</option>
+          <option value="5">5 dias antes</option>
+          <option value="7">7 dias antes</option>
+        </select>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.65rem;margin-top:.75rem">Alterar senha</div>
+      <div class="field-group">
+        <label class="field-label">Senha atual</label>
+        <input id="cfg-senha-atual" type="password" class="field-input" placeholder="••••••••">
+      </div>
+      <div class="field-grid-2">
+        <div class="field-group">
+          <label class="field-label">Nova senha</label>
+          <input id="cfg-senha-nova" type="password" class="field-input" placeholder="••••••••">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Confirmar nova senha</label>
+          <input id="cfg-senha-conf" type="password" class="field-input" placeholder="••••••••">
+        </div>
+      </div>
+      <button onclick="salvarConfiguracoes()"
+        style="background:var(--bl);color:#fff;border:none;border-radius:8px;padding:.5rem 1rem;font-size:12px;font-weight:600;cursor:pointer;width:100%;margin-top:.25rem">
+        Salvar configurações
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL USUÁRIOS ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-usuarios">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <span class="modal-hd-title">👥 Usuários</span>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <button onclick="abrirConvidarUsuario()"
+          style="background:var(--bl);color:#fff;border:none;border-radius:7px;padding:.3rem .75rem;font-size:11px;font-weight:600;cursor:pointer">
+          + Convidar
+        </button>
+        <button class="modal-close" onclick="fecharModal('modal-usuarios')">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" style="padding:0">
+      <table class="tbl" style="font-size:11px">
+        <thead><tr>
+          <th>Usuário</th><th>Email</th><th>Grupo</th><th>Status</th><th>Último acesso</th><th></th>
+        </tr></thead>
+        <tbody id="usuarios-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL CONVIDAR USUÁRIO ══════════════════════════════ -->
+<div class="modal-overlay" id="modal-convidar">
+  <div class="modal-box" style="width:min(400px,96vw)">
+    <div class="modal-hd">
+      <span class="modal-hd-title">+ Convidar usuário</span>
+      <button class="modal-close" onclick="fecharModal('modal-convidar')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">Nome completo</label>
+        <input id="conv-nome" type="text" class="field-input" placeholder="Nome do usuário">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Email</label>
+        <input id="conv-email" type="email" class="field-input" placeholder="email@exemplo.com">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Grupo</label>
+        <select id="conv-grupo" class="field-input">
+          <option value="administrador">Administrador</option>
+          <option value="gestor">Gestor</option>
+          <option value="colaborador">Colaborador</option>
+          <option value="restrito">Restrito</option>
+        </select>
+      </div>
+      <div class="field-group" id="conv-paineis-wrap" style="display:none">
+        <label class="field-label">Painéis permitidos (separar por vírgula)</label>
+        <input id="conv-paineis" type="text" class="field-input" placeholder="ex: p025apt, resumo">
+        <div style="font-size:9px;color:var(--t3);margin-top:3px">Códigos: resumo · pendencias · p00nb · p00itau · p01 · p02izzo · p02juca · p02drac · p025apt · p03q · p0333 · p0334 · p04 · p05 · p06 · pcal · pflux · pprem · pcc · plogs</div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Senha inicial</label>
+        <input id="conv-senha" type="text" class="field-input" placeholder="mínimo 6 caracteres">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="fecharModal('modal-convidar')"
+        style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:7px;padding:.4rem .9rem;font-size:11px;cursor:pointer">Cancelar</button>
+      <button onclick="confirmarConvite()"
+        style="background:var(--bl);color:#fff;border:none;border-radius:7px;padding:.4rem .9rem;font-size:11px;font-weight:600;cursor:pointer">Convidar e enviar email</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL GRUPOS ═════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-grupos">
+  <div class="modal-box">
+    <div class="modal-hd">
+      <span class="modal-hd-title">🏷️ Grupos de usuários</span>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <button onclick="novoGrupo()"
+          style="background:var(--bl);color:#fff;border:none;border-radius:7px;padding:.3rem .75rem;font-size:11px;font-weight:600;cursor:pointer">
+          + Novo grupo
+        </button>
+        <button class="modal-close" onclick="fecharModal('modal-grupos')">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="grupos-body"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL PERMISSÕES ═════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-permissoes">
+  <div class="modal-box" style="width:min(700px,96vw)">
+    <div class="modal-hd">
+      <span class="modal-hd-title">🔐 Matriz de permissões por grupo</span>
+      <button class="modal-close" onclick="fecharModal('modal-permissoes')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0;overflow-x:auto">
+      <div id="perm-matriz"></div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="salvarPermissoes()"
+        style="background:var(--bl);color:#fff;border:none;border-radius:7px;padding:.4rem .9rem;font-size:11px;font-weight:600;cursor:pointer">
+        💾 Salvar permissões
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// MENUS, CONFIGURAÇÕES, USUÁRIOS, GRUPOS, PERMISSÕES
+// ═══════════════════════════════════════════════════════════════
+
+// ── PAINÉIS DO SISTEMA (para matriz de permissões) ────────────
+const _PAINEIS = [
+  {id:'resumo',    label:'★ Resumo',               grupo:'Visão Geral'},
+  {id:'pendencias',label:'⚠ Alertas & Pendências', grupo:'Visão Geral'},
+  {id:'p00nb',     label:'00.1 Nubank',             grupo:'Bancos'},
+  {id:'p00itau',   label:'00.2 Itaú',               grupo:'Bancos'},
+  {id:'p01',       label:'01 Processo',              grupo:'Processo'},
+  {id:'p02izzo',   label:'02.1/2 Izzo 351+369',     grupo:'Imóveis'},
+  {id:'p02juca',   label:'02.3 Juca Pecanha',        grupo:'Imóveis'},
+  {id:'p02drac',   label:'02.4 Dracenas',            grupo:'Imóveis'},
+  {id:'p025apt',   label:'02.5 Apartamento',         grupo:'Imóveis'},
+  {id:'p03q',      label:'03.1 Quitados',            grupo:'Acordos'},
+  {id:'p0333',     label:'03.2 Acordo 425312',       grupo:'Acordos'},
+  {id:'p0334',     label:'03.3 Acordo 443782',       grupo:'Acordos'},
+  {id:'p04',       label:'04 Contas a Pagar',        grupo:'Outros'},
+  {id:'p05',       label:'05 Gabriel · Celina',      grupo:'Outros'},
+  {id:'p06',       label:'06 Compras',               grupo:'Outros'},
+  {id:'pcal',      label:'07 Calendário',            grupo:'Análise'},
+  {id:'pflux',     label:'08 Fluxo de Caixa',        grupo:'Análise'},
+  {id:'pprem',     label:'09 Premissas',             grupo:'Análise'},
+  {id:'pcc',       label:'10 Simulador',             grupo:'Análise'},
+  {id:'plogs',     label:'📋 Logs',                  grupo:'Sistema'},
+  {id:'padmin',    label:'👥 Admin Usuários',         grupo:'Sistema'},
+];
+
+// ── GRUPOS PADRÃO ─────────────────────────────────────────────
+const _GRUPOS = {
+  administrador: {
+    label:'Administrador', cor:'var(--bl)',
+    desc:'Acesso total — gerencia usuários, grupos e permissões',
+    paineis: null // null = todos
+  },
+  gestor: {
+    label:'Gestor', cor:'var(--pp)',
+    desc:'Visualiza e edita todos os painéis financeiros',
+    paineis: ['resumo','pendencias','p00nb','p00itau','p01','p02izzo','p02juca','p02drac','p025apt','p03q','p0333','p0334','p04','p05','p06','pcal','pflux','pprem','pcc','plogs']
+  },
+  colaborador: {
+    label:'Colaborador', cor:'var(--teal)',
+    desc:'Visualiza tudo, edita apenas painéis atribuídos',
+    paineis: ['resumo','pendencias','p00itau','p04','p06','pcal','pprem']
+  },
+  restrito: {
+    label:'Restrito', cor:'var(--am)',
+    desc:'Acessa apenas painéis específicos definidos pelo admin',
+    paineis: ['p025apt']
+  }
+};
+
+// Permissões de edição por grupo
+const _PERM_EDITAR = JSON.parse(localStorage.getItem('zanarolli_perms') || 'null') || {
+  administrador: null, // null = todos
+  gestor: ['resumo','pendencias','p00nb','p00itau','p01','p02izzo','p02juca','p02drac','p025apt','p03q','p0333','p0334','p04','p05','p06','pcal','pflux','pprem','pcc'],
+  colaborador: ['p04','p06','p025apt'],
+  restrito: ['p025apt']
+};
+
+// ── TOGGLE MENU USUÁRIO ───────────────────────────────────────
+function toggleUserMenu(){
+  const dd = document.getElementById('user-dropdown');
+  if(!dd) return;
+  dd.classList.toggle('open');
+}
+
+// Fechar ao clicar fora
+document.addEventListener('click', e=>{
+  const wrap = document.getElementById('user-menu-wrap');
+  if(wrap && !wrap.contains(e.target)){
+    document.getElementById('user-dropdown')?.classList.remove('open');
+  }
+});
+
+// ── ATUALIZAR HEADER COM USUÁRIO ──────────────────────────────
+function _atualizarHeaderUsuario(){
+  const u = _estado?.usuarioLogado;
+  if(!u) return;
+  const inicial = u.nome?.[0]?.toUpperCase()||'?';
+  const el_avatar = document.getElementById('user-avatar');
+  const el_nome = document.getElementById('hdr-usuario-nome');
+  const el_cargo = document.getElementById('hdr-usuario-cargo');
+  const el_ud_nome = document.getElementById('ud-nome');
+  const el_ud_papel = document.getElementById('ud-papel');
+
+  if(el_avatar) el_avatar.textContent = inicial;
+  if(el_nome) el_nome.textContent = u.nome;
+  if(el_cargo) el_cargo.textContent = _GRUPOS[u.nivel]?.label || u.nivel;
+  if(el_ud_nome) el_ud_nome.textContent = u.nome;
+  if(el_ud_papel) el_ud_papel.textContent = _GRUPOS[u.nivel]?.label || u.nivel;
+}
+
+// ── UTILITÁRIOS MODAL ─────────────────────────────────────────
+function fecharModal(id){
+  document.getElementById(id)?.classList.remove('open');
+}
+// Fechar ao clicar no overlay
+document.querySelectorAll?.('.modal-overlay')?.forEach(m=>{
+  m.addEventListener('click', e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+
+// ── TEMA ──────────────────────────────────────────────────────
+function setTema(tema, btn){
+  _estado.tema = tema;
+  localStorage.setItem('zanarolli_tema', tema);
+  _aplicarTema(tema);
+  // Highlight botão ativo
+  document.getElementById('cfg-tema-escuro')?.classList.remove('tema-btn-ativo');
+  document.getElementById('cfg-tema-claro')?.classList.remove('tema-btn-ativo');
+  btn?.classList.add('tema-btn-ativo');
+  _toast2(`Tema ${tema === 'claro' ? 'claro ☀️' : 'escuro 🌙'} ativado`);
+}
+
+function setFonte(tamanho){
+  const mapa = {pequeno:'11px', medio:'13px', grande:'15px'};
+  document.body.style.fontSize = mapa[tamanho] || '13px';
+  localStorage.setItem('zanarolli_fonte', tamanho);
+  _toast2(`Fonte ${tamanho} aplicada`);
+}
+
+// ── CONFIGURAÇÕES ─────────────────────────────────────────────
+function abrirConfiguracoes(){
+  const modal = document.getElementById('modal-config');
+  if(!modal) return;
+  // Pré-preencher email
+  const u = _estado?.usuarioLogado;
+  if(u){
+    const emailInput = document.getElementById('cfg-email-alertas');
+    if(emailInput) emailInput.value = u.email || '';
+  }
+  // Highlight tema atual
+  const temaAtual = _estado.tema || 'escuro';
+  setTimeout(()=>{
+    document.getElementById(`cfg-tema-${temaAtual}`)?.classList.add('tema-btn-ativo');
+  }, 50);
+  modal.classList.add('open');
+}
+
+function salvarConfiguracoes(){
+  const senhaAtual = document.getElementById('cfg-senha-atual')?.value;
+  const senhaNova = document.getElementById('cfg-senha-nova')?.value;
+  const senhaConf = document.getElementById('cfg-senha-conf')?.value;
+
+  if(senhaAtual || senhaNova || senhaConf){
+    const u = _estado?.usuarioLogado;
+    const userObj = _USUARIOS[u?.email];
+    if(!userObj){ _toast2('Usuário não encontrado', false); return; }
+    if(userObj.senha !== senhaAtual){ _toast2('Senha atual incorreta', false); return; }
+    if(senhaNova !== senhaConf){ _toast2('As novas senhas não coincidem', false); return; }
+    if(senhaNova.length < 6){ _toast2('Senha deve ter ao menos 6 caracteres', false); return; }
+    userObj.senha = senhaNova;
+    _toast2('Senha alterada com sucesso ✓');
+  } else {
+    _toast2('Configurações salvas ✓');
+  }
+
+  const dias = document.getElementById('cfg-dias-antecedencia')?.value;
+  if(dias) localStorage.setItem('zanarolli_dias_alerta', dias);
+
+  fecharModal('modal-config');
+}
+
+// ── USUÁRIOS ──────────────────────────────────────────────────
+function abrirUsuarios(){
+  const modal = document.getElementById('modal-usuarios');
+  if(!modal) return;
+  _renderizarUsuarios();
+  modal.classList.add('open');
+}
+
+function _renderizarUsuarios(){
+  const tbody = document.getElementById('usuarios-tbody');
+  if(!tbody) return;
+  const usuarios = Object.entries(_USUARIOS);
+  tbody.innerHTML = usuarios.map(([email, u])=>`
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--bl);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">
+            ${u.nome?.[0]?.toUpperCase()||'?'}
+          </div>
+          <span style="font-weight:600">${u.nome}</span>
+        </div>
+      </td>
+      <td style="font-size:10px;color:var(--t2)">${email}</td>
+      <td>
+        <span style="background:${_GRUPOS[u.nivel]?.cor||'var(--t3)'};opacity:.85;color:#fff;border-radius:4px;padding:2px 7px;font-size:9px;font-weight:700;text-transform:uppercase">
+          ${_GRUPOS[u.nivel]?.label||u.nivel}
+        </span>
+      </td>
+      <td><span class="badge-ativo">Ativo</span></td>
+      <td style="font-size:10px;color:var(--t3)">—</td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button onclick="editarUsuario('${email}')"
+            style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:5px;padding:2px 7px;font-size:10px;cursor:pointer">✏</button>
+          <button onclick="redefinirSenhaUsuario('${email}')"
+            style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:5px;padding:2px 7px;font-size:10px;cursor:pointer">🔑</button>
+          ${email !== _estado?.usuarioLogado?.email ? `
+          <button onclick="desativarUsuario('${email}')"
+            style="background:var(--rb);border:1px solid var(--rd);color:var(--rd);border-radius:5px;padding:2px 7px;font-size:10px;cursor:pointer">✕</button>` : ''}
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function editarUsuario(email){
+  const u = _USUARIOS[email];
+  if(!u) return;
+  const novoNivel = prompt(`Grupo de ${u.nome}:
+Atual: ${u.nivel}
+
+Opções: administrador · gestor · colaborador · restrito`, u.nivel);
+  if(!novoNivel || !_GRUPOS[novoNivel]){ _toast2('Grupo inválido', false); return; }
+  u.nivel = novoNivel;
+  u.paineis = _GRUPOS[novoNivel].paineis;
+  _renderizarUsuarios();
+  _toast2(`${u.nome} → grupo ${_GRUPOS[novoNivel].label} ✓`);
+  _registrarLog('Admin', 'Grupo alterado', '-', `${u.nome}: ${novoNivel}`);
+}
+
+function redefinirSenhaUsuario(email){
+  const u = _USUARIOS[email];
+  if(!u) return;
+  const nova = prompt(`Nova senha para ${u.nome} (min. 6 caracteres):`);
+  if(!nova || nova.length < 6){ _toast2('Senha inválida', false); return; }
+  u.senha = nova;
+  _toast2(`Senha de ${u.nome} redefinida ✓`);
+  _registrarLog('Admin', 'Senha redefinida', '-', u.nome);
+}
+
+function desativarUsuario(email){
+  const u = _USUARIOS[email];
+  if(!u) return;
+  _confirmar(`Desativar acesso de ${u.nome}?`, ()=>{
+    delete _USUARIOS[email];
+    _renderizarUsuarios();
+    _toast2(`${u.nome} desativado ✓`);
+    _registrarLog('Admin', 'Usuário desativado', email, '-');
+  });
+}
+
+function abrirConvidarUsuario(){
+  fecharModal('modal-usuarios');
+  document.getElementById('modal-convidar')?.classList.add('open');
+  document.getElementById('conv-grupo')?.addEventListener('change', e=>{
+    const wrap = document.getElementById('conv-paineis-wrap');
+    if(wrap) wrap.style.display = e.target.value === 'restrito' ? 'block' : 'none';
+  });
+}
+
+function confirmarConvite(){
+  const nome  = document.getElementById('conv-nome')?.value?.trim();
+  const email = document.getElementById('conv-email')?.value?.trim()?.toLowerCase();
+  const grupo = document.getElementById('conv-grupo')?.value;
+  const senha = document.getElementById('conv-senha')?.value;
+  const paineis_str = document.getElementById('conv-paineis')?.value;
+
+  if(!nome||!email||!senha){ _toast2('Preencha todos os campos', false); return; }
+  if(senha.length < 6){ _toast2('Senha deve ter ao menos 6 caracteres', false); return; }
+  if(_USUARIOS[email]){ _toast2('Email já cadastrado', false); return; }
+
+  const paineis = grupo === 'restrito' && paineis_str
+    ? paineis_str.split(',').map(p=>p.trim()).filter(Boolean)
+    : _GRUPOS[grupo]?.paineis;
+
+  _USUARIOS[email] = { nome, senha, nivel:grupo, paineis };
+
+  // Abrir Gmail com convite
+  const subj = encodeURIComponent('Acesso ao Sistema de Gestão Packonsult');
+  const body = encodeURIComponent(
+    `Olá ${nome},
+
+Você foi convidado para acessar o Sistema de Gestão Packonsult.
+
+`+
+    `URL: https://gabrielrzan.github.io/zanarolli-financeiro/
+`+
+    `Email: ${email}
+Senha: ${senha}
+
+`+
+    `Recomendamos alterar sua senha após o primeiro acesso em Configurações.
+
+`+
+    `Packonsult`
+  );
+  window.open(`mailto:${email}?subject=${subj}&body=${body}`);
+
+  fecharModal('modal-convidar');
+  abrirUsuarios();
+  _toast2(`${nome} convidado e email enviado ✓`);
+  _registrarLog('Admin', 'Usuário convidado', '-', `${nome} (${email})`);
+
+  // Limpar form
+  ['conv-nome','conv-email','conv-senha','conv-paineis'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+}
+
+// ── GRUPOS ────────────────────────────────────────────────────
+function abrirGrupos(){
+  const modal = document.getElementById('modal-grupos');
+  if(!modal) return;
+  _renderizarGrupos();
+  modal.classList.add('open');
+}
+
+function _renderizarGrupos(){
+  const body = document.getElementById('grupos-body');
+  if(!body) return;
+  body.innerHTML = Object.entries(_GRUPOS).map(([id, g])=>`
+    <div style="background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:.85rem 1rem;margin-bottom:.65rem">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.35rem">
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <span style="background:${g.cor};color:#fff;border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;text-transform:uppercase">${g.label}</span>
+          <span style="font-size:11px;color:var(--t2)">${Object.values(_USUARIOS).filter(u=>u.nivel===id).length} usuário(s)</span>
+        </div>
+        <button onclick="editarGrupo('${id}')"
+          style="background:none;border:1px solid var(--bd);color:var(--t3);border-radius:5px;padding:2px 8px;font-size:10px;cursor:pointer">✏ Editar</button>
+      </div>
+      <div style="font-size:11px;color:var(--t3);margin-bottom:.35rem">${g.desc}</div>
+      <div style="font-size:10px;color:var(--t3)">
+        Painéis: <span style="color:var(--t2)">${g.paineis ? g.paineis.length + ' painéis' : 'Todos'}</span>
+      </div>
+    </div>`).join('');
+}
+
+function novoGrupo(){
+  const nome = prompt('Nome do novo grupo:'); if(!nome) return;
+  const desc = prompt('Descrição:') || '';
+  const id = nome.toLowerCase().replace(/\s+/g,'_');
+  _GRUPOS[id] = { label:nome, cor:'var(--teal)', desc, paineis:[] };
+  _renderizarGrupos();
+  _toast2(`Grupo "${nome}" criado ✓`);
+}
+
+function editarGrupo(id){
+  const g = _GRUPOS[id];
+  if(!g) return;
+  const novaDesc = prompt(`Descrição do grupo "${g.label}":`, g.desc);
+  if(novaDesc === null) return;
+  g.desc = novaDesc;
+  _renderizarGrupos();
+  _toast2(`Grupo "${g.label}" atualizado ✓`);
+}
+
+// ── PERMISSÕES ────────────────────────────────────────────────
+function abrirPermissoes(){
+  const modal = document.getElementById('modal-permissoes');
+  if(!modal) return;
+  _renderizarPermissoes();
+  modal.classList.add('open');
+}
+
+function _renderizarPermissoes(){
+  const container = document.getElementById('perm-matriz');
+  if(!container) return;
+
+  const grupos = Object.entries(_GRUPOS);
+  const grupos_ids = grupos.map(([id])=>id);
+
+  // Agrupar painéis por seção
+  const secoes = {};
+  _PAINEIS.forEach(p=>{
+    if(!secoes[p.grupo]) secoes[p.grupo]=[];
+    secoes[p.grupo].push(p);
+  });
+
+  let html = `<table class="perm-table">
+    <thead><tr>
+      <th>Painel</th>
+      ${grupos.map(([,g])=>`<th style="color:${g.cor}">${g.label}</th>`).join('')}
+    </tr></thead>
+    <tbody>`;
+
+  Object.entries(secoes).forEach(([secao, paineis])=>{
+    html += `<tr><td colspan="${grupos.length+1}" class="perm-section">${secao}</td></tr>`;
+    paineis.forEach(p=>{
+      html += `<tr>
+        <td style="text-align:left;color:var(--t1);font-size:11px">${p.label}</td>
+        ${grupos_ids.map(gid=>{
+          const temAcesso = _GRUPOS[gid].paineis === null || _GRUPOS[gid].paineis?.includes(p.id);
+          return `<td>
+            <button class="perm-toggle ${temAcesso?'on':'off'}"
+              onclick="togglePerm('${gid}','${p.id}',this)"
+              title="${temAcesso?'Tem acesso':'Sem acesso'}">
+            </button>
+          </td>`;
+        }).join('')}
+      </tr>`;
+    });
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function togglePerm(grupoId, painelId, btn){
+  const g = _GRUPOS[grupoId];
+  if(!g) return;
+  if(grupoId === 'administrador'){
+    _toast2('Administrador sempre tem acesso total', false); return;
+  }
+  if(g.paineis === null) g.paineis = _PAINEIS.map(p=>p.id);
+
+  const idx = g.paineis.indexOf(painelId);
+  if(idx >= 0){
+    g.paineis.splice(idx,1);
+    btn.className = 'perm-toggle off';
+  } else {
+    g.paineis.push(painelId);
+    btn.className = 'perm-toggle on';
+  }
+}
+
+function salvarPermissoes(){
+  // Salvar no localStorage (persistência local)
+  const perms = {};
+  Object.entries(_GRUPOS).forEach(([id,g])=>{ perms[id] = g.paineis; });
+  localStorage.setItem('zanarolli_perms', JSON.stringify(perms));
+  _toast2('Permissões salvas ✓');
+  _registrarLog('Admin', 'Permissões', '-', 'Matriz atualizada');
+  fecharModal('modal-permissoes');
+}
+
+// ── BUSCA — atualizar resultado no novo painel ────────────────
+const _executarBuscaOriginal = window.executarBusca;
+window.executarBusca = async function(q){
+  const panel = document.getElementById('busca-resultados-panel');
+  if(!panel) return;
+  if(!q || q.length < 2){
+    panel.innerHTML='';
+    panel.classList.remove('open');
+    return;
+  }
+  panel.classList.add('open');
+  panel.innerHTML='<div style="padding:.5rem .75rem;font-size:10px;color:var(--t3)">Buscando...</div>';
+
+  const resultados = [];
+  const brl = v => 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
+  try{
+    const [contas, lancs, comps] = await Promise.all([
+      _db2.get('contas_pagar',`select=id,descricao,valor,status&descricao=ilike.*${encodeURIComponent(q)}*&limit=4`),
+      _db2.get('conta_corrente',`select=id,descricao,valor,data&descricao=ilike.*${encodeURIComponent(q)}*&limit=4`),
+      _db2.get('compras',`select=id,descricao,valor_estimado,status&descricao=ilike.*${encodeURIComponent(q)}*&limit=3`)
+    ]);
+    if(contas) contas.forEach(x=>resultados.push({painel:'p04',label:'Contas',texto:x.descricao,valor:x.valor}));
+    if(lancs)  lancs.forEach(x=>resultados.push({painel:'p00itau',label:'Itaú CC',texto:x.descricao,valor:x.valor}));
+    if(comps)  comps.forEach(x=>resultados.push({painel:'p06',label:'Compras',texto:x.descricao,valor:x.valor_estimado}));
+  } catch(e){}
+
+  if(!resultados.length){
+    panel.innerHTML='<div style="padding:.5rem .75rem;font-size:10px;color:var(--t3)">Nenhum resultado</div>';
+    return;
+  }
+  panel.innerHTML = resultados.map(r=>`
+    <div onclick="show('${r.painel}');document.getElementById('busca-input').value='';document.getElementById('busca-resultados-panel').classList.remove('open')"
+      style="display:flex;align-items:center;justify-content:space-between;padding:.45rem .75rem;cursor:pointer;border-bottom:1px solid var(--bd);font-size:11px"
+      onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background=''"
+    >
+      <div>
+        <span style="font-size:8px;background:var(--bb);color:var(--bl);border-radius:3px;padding:1px 5px;margin-right:5px">${r.label}</span>
+        ${r.texto}
+      </div>
+      ${r.valor!=null?`<span style="color:var(--t3);font-size:10px;flex-shrink:0">${brl(r.valor)}</span>`:''}
+    </div>`).join('');
+};
+
+// ── HOOK NO _iniciarApp PARA ATUALIZAR HEADER ─────────────────
+const _iniciarAppBase = window._iniciarApp;
+// Sobrescrever apenas a parte de atualizar o header
+const _origIniciarApp = window._iniciarApp;
+if(_origIniciarApp){
+  const _wrappedIniciarApp = async function(){
+    await _origIniciarApp.call(this);
+    _atualizarHeaderUsuario();
+  };
+  window._iniciarApp = _wrappedIniciarApp;
+}
+
+// Garantir que fechar modais funciona mesmo os criados depois do DOMContentLoaded
+document.addEventListener('click', e=>{
+  if(e.target.classList.contains('modal-overlay')){
+    e.target.classList.remove('open');
+  }
+});
+</script>
 
 </body></html>
