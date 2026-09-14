@@ -271,9 +271,131 @@ canvas{max-width:100%}
   to   { background: transparent; }
 }
 
+
+/* ── MODO CLARO ─────────────────────────────────────────────── */
+body.tema-claro {
+  --bg:#f5f6fa; --sf:#ffffff; --sf2:#eef0f6; --bd:#d0d5e8;
+  --t1:#1a1d27; --t2:#4a5068; --t3:#8892b0;
+  --gb:#e6faf0; --rb:#fde8e8; --ab:#fff8e6; --bb:#e8f0fe;
+}
+body.tema-claro .sidebar, body.tema-claro .hdr,
+body.tema-claro #bottom-nav { background:#f0f2f8; border-color:#d0d5e8; }
+
+/* ── BOTTOM NAV ─────────────────────────────────────────────── */
+.bn-btn {
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  background:none;border:none;color:var(--t3);cursor:pointer;
+  padding:.35rem .5rem;border-radius:8px;transition:all .15s;flex:1;
+  min-height:44px;font-size:9px;
+}
+.bn-btn:hover,.bn-btn.active { color:var(--bl); }
+.bn-btn.active { background:rgba(59,130,246,.1); }
+.bn-lbl { font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.04em }
+.bn-drawer-btn {
+  background:var(--sf2);border:1px solid var(--bd);color:var(--t2);
+  border-radius:7px;padding:.5rem .75rem;font-size:11px;cursor:pointer;
+  text-align:left;transition:all .15s;
+}
+.bn-drawer-btn:hover { background:var(--bl);border-color:var(--bl);color:#fff; }
+
+/* ── ALERTAS DINÂMICOS ──────────────────────────────────────── */
+.alerta-item {
+  display:flex;align-items:flex-start;gap:.65rem;
+  padding:.6rem .85rem;border-radius:8px;margin-bottom:.4rem;
+  border:1px solid transparent;
+}
+.alerta-rd { background:var(--rb);border-color:rgba(239,68,68,.25); }
+.alerta-am { background:var(--ab);border-color:rgba(245,158,11,.25); }
+.alerta-bl { background:var(--bb);border-color:rgba(59,130,246,.2); }
+.alerta-icon { font-size:16px;flex-shrink:0;margin-top:1px }
+.alerta-body { flex:1;font-size:11px }
+.alerta-titulo { font-weight:700;margin-bottom:2px }
+.alerta-sugestao { color:var(--t3);font-size:10px;font-style:italic }
+.alerta-btns { display:flex;gap:.35rem;margin-top:.4rem }
+.alerta-btn-resolver { background:var(--gn);color:#052e16;border:none;border-radius:5px;padding:2px 8px;font-size:9px;cursor:pointer;font-weight:700 }
+.alerta-btn-ignorar { background:var(--sf2);color:var(--t3);border:1px solid var(--bd);border-radius:5px;padding:2px 8px;font-size:9px;cursor:pointer }
+
+/* ── MODAL CONFIRMAÇÃO ──────────────────────────────────────── */
+#modal-confirmar {
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
+  z-index:300;align-items:center;justify-content:center;
+}
+#modal-confirmar.show { display:flex; }
+.modal-confirmar-box {
+  background:var(--sf);border:1px solid var(--bd);border-radius:12px;
+  padding:1.5rem;width:min(380px,92vw);
+}
+
+/* ── BUSCA GLOBAL ───────────────────────────────────────────── */
+.busca-resultado-item {
+  padding:.4rem .5rem;border-radius:6px;cursor:pointer;
+  border-bottom:1px solid var(--bd);
+}
+.busca-resultado-item:hover { background:var(--sf2); }
+.busca-resultado-item:last-child { border-bottom:none; }
+.busca-tag { font-size:8px;background:var(--bb);color:var(--bl);border-radius:3px;padding:1px 4px;margin-right:4px }
+
+/* ── LOADING GLOBAL ─────────────────────────────────────────── */
+#loading-global {
+  display:none;position:fixed;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--bl),var(--pp));
+  z-index:500;animation:loadingBar 1.2s ease infinite;
+}
+@keyframes loadingBar {
+  0%{transform:translateX(-100%)} 100%{transform:translateX(100%)}
+}
+
+/* ── RESPONSIVO BOTTOM NAV ──────────────────────────────────── */
+@media(max-width:767px){
+  #bottom-nav{display:flex!important}
+  .main{padding-bottom:70px!important}
+  .hdr-hide-sm{display:none}
+  body.tema-claro #bottom-nav{background:#f0f2f8}
+}
+@media(min-width:768px){
+  #bottom-nav{display:none!important}
+  #bn-mais-drawer{display:none!important}
+}
+
 </style>
 </head>
-<body>
+
+<!-- TELA DE LOGIN -->
+<div id="tela-login" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center">
+  <div style="background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:2rem;width:min(380px,92vw);box-shadow:0 24px 64px rgba(0,0,0,.5)">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.35rem">Planejamento financeiro familiar</div>
+      <div style="font-size:20px;font-weight:700;color:var(--t1)">Consolidado Zanarolli</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.75rem">
+      <div>
+        <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em">Email</label>
+        <input id="login-email" type="email" placeholder="seu@email.com"
+          style="width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:.55rem .8rem;color:var(--t1);font-size:13px;outline:none"
+          onfocus="this.style.borderColor='var(--bl)'" onblur="this.style.borderColor='var(--bd)'"
+          onkeydown="if(event.key==='Enter')document.getElementById('login-senha').focus()">
+      </div>
+      <div>
+        <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em">Senha</label>
+        <input id="login-senha" type="password" placeholder="••••••••"
+          style="width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:.55rem .8rem;color:var(--t1);font-size:13px;outline:none"
+          onfocus="this.style.borderColor='var(--bl)'" onblur="this.style.borderColor='var(--bd)'"
+          onkeydown="if(event.key==='Enter')fazerLogin()">
+      </div>
+      <div id="login-erro" style="display:none;background:var(--rb);border:1px solid var(--rd);border-radius:7px;padding:.45rem .75rem;font-size:11px;color:var(--rd)"></div>
+      <button onclick="fazerLogin()" id="login-btn"
+        style="background:var(--bl);color:#fff;border:none;border-radius:8px;padding:.65rem;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;margin-top:.25rem"
+        onmouseover="this.style.background='#2563eb'" onmouseout="this.style.background='var(--bl)'">
+        Entrar
+      </button>
+    </div>
+    <div style="text-align:center;margin-top:1rem;font-size:10px;color:var(--t3)">
+      Acesso restrito · família Zanarolli
+    </div>
+  </div>
+</div>
+
+<body style="display:none" id="app-body">
 
 <header class="site-header">
   <div class="hdr-brand">
@@ -283,8 +405,23 @@ canvas{max-width:100%}
   <div class="hdr-sep"></div>
   <div class="hdr-meta">
     <span class="hm">Posição: <strong id="hdr-posicao">18/08/2026</strong></span>
-    <span class="hm">Projeção: <strong>ago/26 → ago/27</strong></span>
-    <span class="hm">Semana: <strong id="hdr-semana">—</strong></span>
+    <span class="hm hdr-hide-sm">Projeção: <strong>ago/26 → ago/27</strong></span>
+  </div>
+  <div style="display:flex;align-items:center;gap:.4rem;flex-shrink:0;margin-left:auto">
+    <div style="position:relative" id="busca-wrap">
+      <button onclick="toggleBusca()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:7px;padding:.3rem .55rem;font-size:13px;cursor:pointer" title="Buscar">🔍</button>
+      <div id="busca-dropdown" style="display:none;position:absolute;right:0;top:calc(100% + 6px);width:min(300px,90vw);background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:.5rem;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.4)">
+        <input id="busca-input" type="text" placeholder="Buscar em todos os painéis..."
+          style="width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.4rem .6rem;color:var(--t1);font-size:12px;outline:none"
+          oninput="executarBusca(this.value)">
+        <div id="busca-resultados" style="margin-top:.4rem;max-height:220px;overflow-y:auto;font-size:11px"></div>
+      </div>
+    </div>
+    <button onclick="toggleTema()" id="btn-tema" style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:7px;padding:.3rem .55rem;font-size:13px;cursor:pointer" title="Modo claro/escuro">🌙</button>
+    <div id="hdr-usuario" style="display:none;align-items:center;gap:.35rem">
+      <span id="hdr-usuario-nome" style="font-size:10px;color:var(--t2);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+      <button onclick="fazerLogout()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--t3);border-radius:6px;padding:2px 6px;font-size:10px;cursor:pointer">Sair</button>
+    </div>
   </div>
 </header>
 <button class="menu-toggle" onclick="toggleMenu()">☰</button>
@@ -305,6 +442,7 @@ canvas{max-width:100%}
   <button class="sb-btn" onclick="show('p02izzo',this)"><span class="badge">02.1/2</span>Izzo 351+369<span class="pip pip-a"></span></button>
   <button class="sb-btn" onclick="show('p02juca',this)"><span class="badge">02.3</span>Juca Pecanha<span class="pip pip-a"></span></button>
   <button class="sb-btn" onclick="show('p02drac',this)"><span class="badge">02.4</span>Dracenas<span class="pip pip-g"></span></button>
+  <button class="sb-btn" onclick="show('p025apt',this)"><span class="badge">02.5</span>Apartamento<span class="pip pip-a"></span></button>
   <hr class="sb-hr">
   <span class="sb-label">Acordos</span>
   <button class="sb-btn" onclick="show('p03q',this)"><span class="badge">03.1</span>Quitados<span class="pip pip-g"></span></button>
@@ -1335,6 +1473,13 @@ canvas{max-width:100%}
     </tbody>
   </table>
   <div class="strip sr">Sem venda: impacto de R$1.647/mês a partir de fev/27 (perda de receita R$957 + custo R$690).</div>
+</div>
+</section>
+
+<section class="panel" id="p025apt">
+<div class="panel-hd">02.5 — Apartamento Financiado · SAC 10,89% a.a.</div>
+<div id="apt-content">
+  <div class="loading-sb">Carregando...</div>
 </div>
 </section>
 <!-- ── 03 ACORDOS ──────────────────────────────────────────────── -->
@@ -2967,4 +3112,601 @@ function _atualizarPosicao(data) {
 }
 </script>
 
+
+<!-- BOTTOM NAVIGATION — mobile ≤767px -->
+<nav id="bottom-nav" style="display:none;position:fixed;bottom:0;left:0;right:0;height:58px;background:#0a0d14;border-top:1px solid var(--bd);z-index:88;align-items:center;justify-content:space-around;padding:0 .25rem">
+  <button class="bn-btn active" onclick="show('resumo',this);bnActive(this)" data-panel="resumo">
+    <span style="font-size:18px">★</span><span class="bn-lbl">Resumo</span>
+  </button>
+  <button class="bn-btn" onclick="show('pendencias',this);bnActive(this)" data-panel="pendencias">
+    <span style="font-size:18px">⚠</span><span class="bn-lbl">Alertas</span>
+  </button>
+  <button class="bn-btn" onclick="show('p00itau',this);bnActive(this)" data-panel="p00itau">
+    <span style="font-size:18px">🏦</span><span class="bn-lbl">Itaú</span>
+  </button>
+  <button class="bn-btn" onclick="show('p04',this);bnActive(this)" data-panel="p04">
+    <span style="font-size:18px">📋</span><span class="bn-lbl">Contas</span>
+  </button>
+  <button class="bn-btn" onclick="toggleBnMais()" id="bn-mais-btn">
+    <span style="font-size:18px">⋯</span><span class="bn-lbl">Mais</span>
+  </button>
+</nav>
+
+<!-- DRAWER "Mais" — bottom nav -->
+<div id="bn-mais-drawer" style="display:none;position:fixed;bottom:58px;left:0;right:0;background:var(--sf);border-top:1px solid var(--bd);z-index:87;padding:.75rem;max-height:60vh;overflow-y:auto">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+    <button class="bn-drawer-btn" onclick="show('p00nb',null);closeBnMais()">00.1 Nubank</button>
+    <button class="bn-drawer-btn" onclick="show('p01',null);closeBnMais()">01 Processo</button>
+    <button class="bn-drawer-btn" onclick="show('p02izzo',null);closeBnMais()">02.1/2 Izzo</button>
+    <button class="bn-drawer-btn" onclick="show('p02juca',null);closeBnMais()">02.3 Juca</button>
+    <button class="bn-drawer-btn" onclick="show('p02drac',null);closeBnMais()">02.4 Dracenas</button>
+    <button class="bn-drawer-btn" onclick="show('p025apt',null);closeBnMais()">02.5 Apartamento</button>
+    <button class="bn-drawer-btn" onclick="show('p03q',null);closeBnMais()">03.1 Quitados</button>
+    <button class="bn-drawer-btn" onclick="show('p0333',null);closeBnMais()">03.2 Acordo 425</button>
+    <button class="bn-drawer-btn" onclick="show('p0334',null);closeBnMais()">03.3 Acordo 443</button>
+    <button class="bn-drawer-btn" onclick="show('p05',null);closeBnMais()">05 Gabriel</button>
+    <button class="bn-drawer-btn" onclick="show('p06',null);closeBnMais()">06 Compras</button>
+    <button class="bn-drawer-btn" onclick="show('pcal',null);closeBnMais()">07 Calendário</button>
+    <button class="bn-drawer-btn" onclick="show('pflux',null);closeBnMais()">08 Fluxo</button>
+    <button class="bn-drawer-btn" onclick="show('pprem',null);closeBnMais()">09 Premissas</button>
+    <button class="bn-drawer-btn" onclick="show('pcc',null);closeBnMais()">10 Simulador</button>
+    <button class="bn-drawer-btn" onclick="show('plogs',null);closeBnMais()">Logs</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// MAPA COMPLETO — Implementação v2 · 14/09/2026
+// ═══════════════════════════════════════════════════════════════
+
+const _SB2_URL = 'https://zvzolwyqezfzjrqydfnt.supabase.co/rest/v1';
+const _SB2_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2em9sd3lxZXpmempycXlkZm50Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2NjA1MjUsImV4cCI6MjEwMzIzNjUyNX0.MxQ1uqa_zva3-NoL4OY0ftOQrPbAGIvDCCneGtAJX5I';
+const _H2 = {
+  'apikey':_SB2_KEY,'Authorization':'Bearer '+_SB2_KEY,
+  'Content-Type':'application/json','Prefer':'return=representation'
+};
+const _db2 = {
+  get:(t,q='')=>fetch(`${_SB2_URL}/${t}?${q}`,{headers:_H2}).then(r=>r.ok?r.json():null),
+  post:(t,d)=>fetch(`${_SB2_URL}/${t}`,{method:'POST',headers:_H2,body:JSON.stringify(d)}).then(r=>r.ok?r.json():null),
+  patch:(t,id,d)=>fetch(`${_SB2_URL}/${t}?id=eq.${id}`,{method:'PATCH',headers:_H2,body:JSON.stringify(d)}).then(r=>r.ok?r.json():null),
+  del:(t,id)=>fetch(`${_SB2_URL}/${t}?id=eq.${id}`,{method:'DELETE',headers:_H2}).then(r=>r.ok?null:null)
+};
+
+// ── ESTADO GLOBAL ─────────────────────────────────────────────
+const _estado = {
+  usuarioLogado: null,
+  tema: localStorage.getItem('zanarolli_tema') || 'escuro',
+  painelAtivo: 'resumo'
+};
+
+// ── LOADING GLOBAL ────────────────────────────────────────────
+function _showLoading(){ const el=document.getElementById('loading-global'); if(el) el.style.display='block'; }
+function _hideLoading(){ const el=document.getElementById('loading-global'); if(el) el.style.display='none'; }
+
+// ── LOGIN / AUTH ──────────────────────────────────────────────
+// Usuários hardcoded (sem Supabase Auth real — simples e seguro para uso familiar)
+const _USUARIOS = {
+  'renato@zanarolli.com':  {senha:'zan@2026', nome:'Renato',  nivel:'administrador', paineis:null},
+  'tania@zanarolli.com':   {senha:'zan@2026', nome:'Tania',   nivel:'administrador', paineis:null},
+  'gabriel@zanarolli.com': {senha:'zan@2026', nome:'Gabriel', nivel:'administrador', paineis:null},
+  'thais@zanarolli.com':   {senha:'apt@2026', nome:'Thais',   nivel:'restrito',      paineis:['p025apt']}
+};
+
+function _verificarSessao(){
+  const sessao = sessionStorage.getItem('zanarolli_user');
+  if(sessao){
+    try{
+      _estado.usuarioLogado = JSON.parse(sessao);
+      _iniciarApp();
+    } catch(e){ _mostrarLogin(); }
+  } else { _mostrarLogin(); }
+}
+
+function _mostrarLogin(){
+  const login = document.getElementById('tela-login');
+  if(login) login.style.display='flex';
+  const app = document.getElementById('app-body');
+  if(app) app.style.display='none';
+}
+
+function fazerLogin(){
+  const email = document.getElementById('login-email')?.value?.toLowerCase()?.trim();
+  const senha = document.getElementById('login-senha')?.value;
+  const erro = document.getElementById('login-erro');
+  const btn = document.getElementById('login-btn');
+
+  if(!email || !senha){ if(erro){ erro.textContent='Preencha email e senha.'; erro.style.display='block'; } return; }
+  
+  const user = _USUARIOS[email];
+  if(!user || user.senha !== senha){
+    if(erro){ erro.textContent='Email ou senha incorretos.'; erro.style.display='block'; }
+    return;
+  }
+
+  _estado.usuarioLogado = {email, nome:user.nome, nivel:user.nivel, paineis:user.paineis};
+  sessionStorage.setItem('zanarolli_user', JSON.stringify(_estado.usuarioLogado));
+  
+  const login = document.getElementById('tela-login');
+  if(login) login.style.display='none';
+  
+  _iniciarApp();
+}
+
+function fazerLogout(){
+  sessionStorage.removeItem('zanarolli_user');
+  _estado.usuarioLogado = null;
+  _mostrarLogin();
+}
+
+function _iniciarApp(){
+  const app = document.getElementById('app-body');
+  if(app) app.style.display='block';
+
+  // Exibir nome no header
+  const nomeEl = document.getElementById('hdr-usuario-nome');
+  const hdrUser = document.getElementById('hdr-usuario');
+  if(nomeEl && _estado.usuarioLogado){ nomeEl.textContent = _estado.usuarioLogado.nome; }
+  if(hdrUser) hdrUser.style.display='flex';
+
+  // Aplicar restrições de painel (Thais)
+  const u = _estado.usuarioLogado;
+  if(u && u.paineis){
+    // Ocultar todos os botões do sidebar exceto os permitidos
+    document.querySelectorAll('.sb-btn').forEach(btn=>{
+      const onclick = btn.getAttribute('onclick') || '';
+      const match = onclick.match(/show\('([^']+)'/);
+      if(match){
+        const painel = match[1];
+        const permitido = u.paineis.some(p => painel === p || painel === 'resumo');
+        btn.style.display = permitido ? '' : 'none';
+      }
+    });
+    // Navegar para o primeiro painel permitido
+    if(u.paineis[0]){ show(u.paineis[0]); }
+  }
+
+  // Aplicar tema
+  _aplicarTema(_estado.tema);
+
+  // Heartbeat
+  _heartbeat();
+
+  // Sync inicial
+  setTimeout(_syncCompleto, 600);
+
+  // Inicializar bottom nav
+  _initBottomNav();
+
+  // Carregar painel 02.5
+  _carregarApartamento();
+}
+
+// ── HEARTBEAT ─────────────────────────────────────────────────
+async function _heartbeat(){
+  try{ await _db2.post('heartbeat',{}); } catch(e){}
+}
+
+// ── TEMA CLARO/ESCURO ─────────────────────────────────────────
+function toggleTema(){
+  _estado.tema = _estado.tema === 'escuro' ? 'claro' : 'escuro';
+  localStorage.setItem('zanarolli_tema', _estado.tema);
+  _aplicarTema(_estado.tema);
+}
+function _aplicarTema(tema){
+  const btn = document.getElementById('btn-tema');
+  if(tema === 'claro'){
+    document.body.classList.add('tema-claro');
+    if(btn) btn.textContent = '☀️';
+  } else {
+    document.body.classList.remove('tema-claro');
+    if(btn) btn.textContent = '🌙';
+  }
+}
+
+// ── BOTTOM NAV ────────────────────────────────────────────────
+function _initBottomNav(){
+  const nav = document.getElementById('bottom-nav');
+  if(nav && window.innerWidth <= 767) nav.style.display='flex';
+}
+function bnActive(btn){
+  document.querySelectorAll('.bn-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleBnMais(){
+  const d = document.getElementById('bn-mais-drawer');
+  if(d) d.style.display = d.style.display==='none'?'block':'none';
+}
+function closeBnMais(){
+  const d = document.getElementById('bn-mais-drawer');
+  if(d) d.style.display='none';
+}
+
+// ── BUSCA GLOBAL ─────────────────────────────────────────────
+function toggleBusca(){
+  const d = document.getElementById('busca-dropdown');
+  if(!d) return;
+  const visible = d.style.display !== 'none';
+  d.style.display = visible ? 'none' : 'block';
+  if(!visible) setTimeout(()=>document.getElementById('busca-input')?.focus(),50);
+}
+document.addEventListener('click', e=>{
+  const wrap = document.getElementById('busca-wrap');
+  if(wrap && !wrap.contains(e.target)){
+    const d = document.getElementById('busca-dropdown');
+    if(d) d.style.display='none';
+  }
+});
+
+async function executarBusca(q){
+  const res = document.getElementById('busca-resultados');
+  if(!res) return;
+  if(!q || q.length < 2){ res.innerHTML='<div style="color:var(--t3);padding:.25rem .5rem;font-size:10px">Digite ao menos 2 caracteres</div>'; return; }
+  
+  res.innerHTML='<div style="color:var(--t3);padding:.25rem .5rem;font-size:10px">Buscando...</div>';
+  
+  const resultados = [];
+  try{
+    // Buscar em contas_pagar
+    const contas = await _db2.get('contas_pagar',`select=id,descricao,valor,status&descricao=ilike.*${encodeURIComponent(q)}*&limit=5`);
+    if(contas) contas.forEach(c=>resultados.push({painel:'p04',label:'Contas a Pagar',texto:c.descricao,valor:c.valor,status:c.status}));
+    
+    // Buscar em conta_corrente
+    const lancs = await _db2.get('conta_corrente',`select=id,descricao,valor,data&descricao=ilike.*${encodeURIComponent(q)}*&limit=5`);
+    if(lancs) lancs.forEach(l=>resultados.push({painel:'p00itau',label:'Itaú CC',texto:l.descricao,valor:l.valor}));
+
+    // Buscar em compras
+    const comps = await _db2.get('compras',`select=id,descricao,valor_estimado,status&descricao=ilike.*${encodeURIComponent(q)}*&limit=3`);
+    if(comps) comps.forEach(cp=>resultados.push({painel:'p06',label:'Compras',texto:cp.descricao,valor:cp.valor_estimado}));
+  } catch(e){}
+
+  if(!resultados.length){
+    res.innerHTML='<div style="color:var(--t3);padding:.4rem .5rem;font-size:10px">Nenhum resultado encontrado</div>';
+    return;
+  }
+
+  const brl = v => 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
+  res.innerHTML = resultados.map(r=>`
+    <div class="busca-resultado-item" onclick="show('${r.painel}');toggleBusca()">
+      <span class="busca-tag">${r.label}</span>
+      <span style="color:var(--t1)">${r.texto}</span>
+      ${r.valor!=null?`<span style="float:right;color:var(--t3)">${brl(r.valor)}</span>`:''}
+    </div>`).join('');
+}
+
+// ── MODAL CONFIRMAÇÃO DELETE ──────────────────────────────────
+let _confirmarCallback = null;
+function _confirmar(msg, callback){
+  let modal = document.getElementById('modal-confirmar');
+  if(!modal){
+    modal = document.createElement('div');
+    modal.id = 'modal-confirmar';
+    modal.innerHTML = `
+      <div class="modal-confirmar-box">
+        <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:.5rem">Confirmar ação</div>
+        <div id="modal-confirmar-msg" style="font-size:12px;color:var(--t2);margin-bottom:1rem"></div>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end">
+          <button onclick="document.getElementById('modal-confirmar').classList.remove('show')"
+            style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:7px;padding:.4rem .9rem;font-size:11px;cursor:pointer">Cancelar</button>
+          <button id="modal-confirmar-ok"
+            style="background:var(--rd);border:none;color:#fff;border-radius:7px;padding:.4rem .9rem;font-size:11px;font-weight:600;cursor:pointer">Confirmar</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', e=>{ if(e.target===modal) modal.classList.remove('show'); });
+  }
+  document.getElementById('modal-confirmar-msg').textContent = msg;
+  document.getElementById('modal-confirmar-ok').onclick = ()=>{
+    modal.classList.remove('show');
+    if(callback) callback();
+  };
+  modal.classList.add('show');
+}
+
+// ── ALERTAS DINÂMICOS ─────────────────────────────────────────
+async function _gerarAlertas(){
+  const container = document.getElementById('alertas-dinamicos');
+  if(!container) return;
+
+  const alertas = [];
+  const hoje = new Date();
+  const brl = v => 'R$ '+Number(v).toLocaleString('pt-BR',{minimumFractionDigits:2});
+
+  try{
+    // Contas vencidas
+    const vencidas = await _db2.get('contas_pagar','select=*&status=eq.vencido');
+    if(vencidas) vencidas.forEach(c=>{
+      alertas.push({tipo:'rd',icon:'🔴',titulo:`${c.descricao} — VENCIDA`,sugestao:`Pagar imediatamente. Valor: ${brl(c.valor)}`,painel:'p04'});
+    });
+
+    // Contas vencendo em 3 dias
+    const em3 = await _db2.get('contas_pagar','select=*&status=eq.pendente&order=vencimento.asc');
+    if(em3) em3.forEach(c=>{
+      if(!c.vencimento) return;
+      const dias = Math.ceil((new Date(c.vencimento)-hoje)/864e5);
+      if(dias >= 0 && dias <= 3){
+        alertas.push({tipo:'am',icon:'🟡',titulo:`${c.descricao} — vence em ${dias===0?'HOJE':`${dias} dia(s)`}`,sugestao:`Vencimento: ${new Date(c.vencimento+'T12:00').toLocaleDateString('pt-BR')} · ${brl(c.valor)}`,painel:'p04'});
+      }
+    });
+
+    // Saldo CC
+    const cc = await _db2.get('conta_corrente','select=saldo_apos&realizado=eq.true&order=id.desc&limit=1');
+    if(cc && cc[0] && Number(cc[0].saldo_apos) < 0){
+      alertas.push({tipo:'rd',icon:'🔴',titulo:`Saldo CC NEGATIVO: ${brl(cc[0].saldo_apos)}`,sugestao:'Providenciar transferência ou resgatar investimento imediatamente.',painel:'p00itau'});
+    }
+
+    // Dracenas countdown
+    const dias_drac = Math.ceil((new Date('2027-01-07')-hoje)/864e5);
+    if(dias_drac <= 60 && dias_drac > 0){
+      const tipo = dias_drac <= 30 ? 'am' : 'bl';
+      alertas.push({tipo,icon:dias_drac<=30?'🟡':'🔵',titulo:`Dracenas — contrato encerra em ${dias_drac} dias (07/01/2027)`,sugestao:'Definir próximo passo: renovação, novo inquilino ou venda.',painel:'p02drac'});
+    }
+
+    // Acordos sem CB
+    const ac32 = await _db2.get('acordos','select=parcela_atual&codigo=eq.03.2');
+    if(ac32 && ac32[0] && ac32[0].parcela_atual >= 36){
+      alertas.push({tipo:'bl',icon:'🔵',titulo:'Acordo 425312 — Solicitar boletos parc. 36+ via 1DOC',sugestao:'Parece que não temos os próximos boletos. Solicitar no portal da prefeitura.',painel:'p0333'});
+    }
+
+  } catch(e){ console.warn('Alertas:', e); }
+
+  if(!alertas.length){
+    container.innerHTML='<div style="color:var(--gn);font-size:11px;padding:.5rem">✓ Nenhum alerta ativo no momento.</div>';
+    return;
+  }
+
+  container.innerHTML = alertas.map((a,i)=>`
+    <div class="alerta-item alerta-${a.tipo}">
+      <span class="alerta-icon">${a.icon}</span>
+      <div class="alerta-body">
+        <div class="alerta-titulo">${a.titulo}</div>
+        <div class="alerta-sugestao">💡 ${a.sugestao}</div>
+        <div class="alerta-btns">
+          <button class="alerta-btn-resolver" onclick="show('${a.painel}');document.querySelector('.sb-btn[onclick*=${a.painel}]')?.click()">Resolver →</button>
+          <button class="alerta-btn-ignorar" onclick="this.closest('.alerta-item').style.opacity='.3'">Ignorar</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  // Verificar se Simulador tem saldo negativo
+  const saldoFinal = document.getElementById('cc-saldo-final');
+  if(saldoFinal){
+    const val = saldoFinal.textContent.replace(/[R$\s\.]/g,'').replace(',','.');
+    if(parseFloat(val) < 0){
+      alertas.push({tipo:'rd',icon:'🔴',titulo:`Simulador projeta saldo NEGATIVO`,sugestao:'Rever lançamentos projetados ou adiar pagamentos não urgentes.',painel:'pcc'});
+    }
+  }
+}
+
+// ── PAINEL 02.5 APARTAMENTO ──────────────────────────────────
+async function _carregarApartamento(){
+  const container = document.getElementById('apt-content');
+  if(!container) return;
+
+  const brl = v => 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
+
+  let apt = null;
+  try{
+    const data = await _db2.get('apartamento_financiado','select=*&limit=1');
+    if(data && data[0]) apt = data[0];
+  } catch(e){}
+
+  container.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem">
+      <div class="metric m-am">
+        <div class="metric-lbl">Parcela Mensal</div>
+        <div class="metric-val" style="color:var(--am)">${brl(apt?.parcela_atual||3500)}</div>
+        <div class="metric-sub">SAC · ${apt?.taxa_aa||10.89}% a.a. · dia ${apt?.dia_vencimento||10}</div>
+      </div>
+      <div class="metric m-am">
+        <div class="metric-lbl">Saldo Devedor</div>
+        <div class="metric-val" style="color:var(--am)">${brl(apt?.saldo_devedor||0)}</div>
+        <div class="metric-sub" id="apt-sd-sub">atualizar saldo</div>
+      </div>
+      <div class="metric m-gn">
+        <div class="metric-lbl">Aluguel QuintoAndar</div>
+        <div class="metric-val" style="color:var(--gn)">${brl(apt?.aluguel_mensal||0)}</div>
+        <div class="metric-sub">a partir de out/26</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem">
+      <button onclick="aptPagarParcela(${apt?.id||1})" class="btn-sb-action" 
+        style="background:var(--gn);color:#052e16;border:none;border-radius:7px;padding:.4rem .85rem;font-size:11px;font-weight:600;cursor:pointer">
+        ✓ Confirmar parcela paga
+      </button>
+      <button onclick="aptRegistrarAluguel(${apt?.id||1})" class="btn-sb-action"
+        style="background:var(--bl);color:#fff;border:none;border-radius:7px;padding:.4rem .85rem;font-size:11px;font-weight:600;cursor:pointer">
+        ✓ Confirmar aluguel recebido
+      </button>
+      <button onclick="aptEditarSaldo(${apt?.id||1},${apt?.saldo_devedor||0})" class="btn-sb-action"
+        style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:7px;padding:.4rem .85rem;font-size:11px;cursor:pointer">
+        ✏ Editar saldo devedor
+      </button>
+    </div>
+
+    <!-- Simulador de amortização -->
+    <div style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:.85rem;margin-bottom:.75rem">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-bottom:.5rem">Simulador de amortização extra</div>
+      <div style="display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap">
+        <div>
+          <label style="font-size:10px;color:var(--t3);display:block;margin-bottom:3px">Valor a amortizar</label>
+          <input id="apt-amort-val" type="number" placeholder="0,00"
+            style="background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:.35rem .6rem;color:var(--t1);font-size:12px;width:130px">
+        </div>
+        <button onclick="aptSimularAmortizacao(${apt?.saldo_devedor||0},${apt?.taxa_aa||10.89})"
+          style="background:var(--pp);color:#fff;border:none;border-radius:7px;padding:.4rem .85rem;font-size:11px;font-weight:600;cursor:pointer">
+          Simular
+        </button>
+      </div>
+      <div id="apt-amort-resultado" style="margin-top:.5rem;font-size:11px;color:var(--t3)"></div>
+    </div>
+
+    <!-- Histórico de parcelas -->
+    <div class="sec-div">Histórico de pagamentos</div>
+    <div id="apt-historico"><div style="color:var(--t3);font-size:11px;padding:.5rem">Nenhum registro ainda.</div></div>
+  `;
+
+  // Carregar histórico
+  try{
+    const hist = await _db2.get('apartamento_parcelas','select=*&order=criado_em.desc&limit=10');
+    if(hist && hist.length){
+      const brl2 = v => 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2});
+      document.getElementById('apt-historico').innerHTML=`
+        <div class="tbl-wrap"><table class="tbl" style="font-size:11px">
+          <thead><tr><th>Mês</th><th>Tipo</th><th class="r">Valor</th><th class="r">Saldo após</th><th>Pago em</th></tr></thead>
+          <tbody>${hist.map(h=>`
+            <tr class="${h.tipo==='aluguel'?'pos':''}">
+              <td>${h.mes_referencia}</td>
+              <td><span class="pl ${h.tipo==='aluguel'?'plg':h.tipo==='amortizacao_extra'?'plb':'pla'}">${h.tipo}</span></td>
+              <td class="r">${brl2(h.valor)}</td>
+              <td class="r" style="color:var(--t2)">${h.saldo_devedor_apos?brl2(h.saldo_devedor_apos):'—'}</td>
+              <td style="color:var(--t2)">${h.pago_em?new Date(h.pago_em+'T12:00').toLocaleDateString('pt-BR'):'—'}</td>
+            </tr>`).join('')}</tbody>
+        </table></div>`;
+    }
+  } catch(e){}
+}
+
+async function aptPagarParcela(id){
+  _confirmar('Confirmar pagamento da parcela mensal?', async ()=>{
+    const mes = new Date().toLocaleDateString('pt-BR',{month:'2-digit',year:'2-digit'}).replace('/','/');
+    const apt = (await _db2.get('apartamento_financiado',`select=*&id=eq.${id}`))?.[0];
+    if(!apt) return;
+    
+    await _db2.post('apartamento_parcelas',{
+      apartamento_id:id,mes_referencia:mes,tipo:'parcela',
+      valor:apt.parcela_atual,pago_em:new Date().toISOString().slice(0,10),status:'pago'
+    });
+    // Lançar no CC
+    if(typeof _db !== 'undefined'){
+      await _db.post('conta_corrente',{
+        data:new Date().toISOString().slice(0,10),
+        descricao:`Parcela apartamento financiado · ${mes}`,
+        valor:-apt.parcela_atual,tipo:'IMÓVEIS',centro_custo:'02.5',realizado:true
+      });
+    }
+    if(typeof _registrarLog !== 'undefined') _registrarLog('02.5 Apartamento','Parcela','-',`Paga ${mes}`);
+    _toast2(`Parcela ${mes} registrada ✓`);
+    _carregarApartamento();
+  });
+}
+
+async function aptRegistrarAluguel(id){
+  _confirmar('Confirmar recebimento do aluguel QuintoAndar?', async ()=>{
+    const apt = (await _db2.get('apartamento_financiado',`select=*&id=eq.${id}`))?.[0];
+    if(!apt) return;
+    const mes = new Date().toLocaleDateString('pt-BR',{month:'2-digit',year:'2-digit'}).replace('/','/');
+    await _db2.post('apartamento_parcelas',{
+      apartamento_id:id,mes_referencia:mes,tipo:'aluguel',
+      valor:apt.aluguel_mensal||3500,pago_em:new Date().toISOString().slice(0,10),status:'recebido'
+    });
+    if(typeof _db !== 'undefined'){
+      await _db.post('conta_corrente',{
+        data:new Date().toISOString().slice(0,10),
+        descricao:`Aluguel apartamento QuintoAndar · ${mes}`,
+        valor:apt.aluguel_mensal||3500,tipo:'ENTRADA',centro_custo:'02.5',realizado:true
+      });
+    }
+    if(typeof _registrarLog !== 'undefined') _registrarLog('02.5 Apartamento','Aluguel','-',`Recebido ${mes}`);
+    _toast2(`Aluguel ${mes} registrado ✓`);
+    _carregarApartamento();
+  });
+}
+
+async function aptEditarSaldo(id, saldoAtual){
+  const novo = prompt(`Novo saldo devedor (atual: R$ ${Number(saldoAtual).toLocaleString('pt-BR',{minimumFractionDigits:2})}):`,''+saldoAtual);
+  if(novo===null||isNaN(Number(novo))) return;
+  await _db2.patch('apartamento_financiado',id,{saldo_devedor:Number(novo),atualizado_em:new Date().toISOString()});
+  if(typeof _registrarLog !== 'undefined') _registrarLog('02.5 Apartamento','Saldo devedor',String(saldoAtual),novo);
+  _toast2('Saldo atualizado ✓');
+  _carregarApartamento();
+}
+
+function aptSimularAmortizacao(saldo, taxa_aa){
+  const val = parseFloat(document.getElementById('apt-amort-val')?.value||0);
+  if(!val || val <= 0){ return; }
+  const taxa_am = taxa_aa / 100 / 12;
+  const novoSaldo = Math.max(0, saldo - val);
+  const economiaJuros = val * taxa_am * 12; // estimativa simples de 1 ano
+  const res = document.getElementById('apt-amort-resultado');
+  if(res) res.innerHTML = `
+    <div style="background:var(--gb);border:1px solid rgba(34,197,94,.2);border-radius:7px;padding:.5rem .75rem;color:var(--t1)">
+      Amortizando <strong>R$ ${val.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong>:<br>
+      Novo saldo devedor: <strong style="color:var(--gn)">R$ ${novoSaldo.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong><br>
+      Economia estimada em juros (12 meses): <strong style="color:var(--gn)">R$ ${economiaJuros.toLocaleString('pt-BR',{minimumFractionDigits:2})}</strong>
+    </div>`;
+}
+
+// ── SYNC COMPLETO ─────────────────────────────────────────────
+async function _syncCompleto(){
+  _showLoading();
+  try{
+    // Saldo CC
+    const cc = await _db2.get('conta_corrente','select=saldo_apos&realizado=eq.true&order=id.desc&limit=1');
+    if(cc && cc[0]){
+      const saldo = Number(cc[0].saldo_apos);
+      const el = document.getElementById('hdr-saldo') || document.querySelector('[id*="saldo-cc"]');
+      // Atualizar simulador
+      const input = document.getElementById('cc-input-saldo');
+      if(input){ input.value = saldo.toFixed(2); if(typeof ccRecalcular!=='undefined') ccRecalcular(); }
+    }
+
+    // CDB
+    const inv = await _db2.get('investimentos','select=*');
+    if(inv) inv.forEach(i=>{
+      document.querySelectorAll(`[data-inv="${i.codigo}"]`).forEach(el=>{
+        el.textContent = 'R$ '+Number(i.saldo).toLocaleString('pt-BR',{minimumFractionDigits:2});
+      });
+    });
+
+    // Gerar alertas
+    await _gerarAlertas();
+
+    // Heartbeat
+    await _heartbeat();
+
+  } catch(e){ console.warn('Sync:', e); }
+  _hideLoading();
+}
+
+// ── TOAST v2 ─────────────────────────────────────────────────
+function _toast2(msg, ok=true){
+  let el = document.getElementById('_sb_toast');
+  if(!el){
+    el = document.createElement('div');
+    el.id='_sb_toast';
+    el.style.cssText='position:fixed;bottom:70px;right:1rem;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:.65rem 1.1rem;font-size:12px;font-weight:600;color:var(--t1);box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(120%);transition:transform .25s;z-index:9999;max-width:300px';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.style.borderColor=ok?'var(--gn)':'var(--rd)';
+  el.style.color=ok?'var(--gn)':'var(--rd)';
+  el.style.transform='translateY(0)';
+  setTimeout(()=>el.style.transform='translateY(120%)',3000);
+}
+
+// ── LOADING GLOBAL ────────────────────────────────────────────
+function _addLoadingBar(){
+  const bar = document.createElement('div');
+  bar.id='loading-global';
+  document.body.prepend(bar);
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', ()=>{
+  _addLoadingBar();
+  _aplicarTema(_estado.tema);
+  _verificarSessao();
+
+  // Se painéis de pendências existem, carregar alertas
+  const painelPend = document.getElementById('pendencias');
+  if(painelPend){
+    // Observar quando o painel fica ativo
+    const obs = new MutationObserver(()=>{
+      if(painelPend.classList.contains('active')) _gerarAlertas();
+    });
+    obs.observe(painelPend, {attributes:true, attributeFilter:['class']});
+  }
+});
+</script>
 </body></html>
