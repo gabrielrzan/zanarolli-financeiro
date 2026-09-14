@@ -3238,10 +3238,10 @@ function _hideLoading(){ const el=document.getElementById('loading-global'); if(
 // ── LOGIN / AUTH ──────────────────────────────────────────────
 // Usuários hardcoded (sem Supabase Auth real — simples e seguro para uso familiar)
 const _USUARIOS = {
-  'renato@zanarolli.com':  {senha:'zan@2026', nome:'Renato',  nivel:'administrador', paineis:null},
-  'tania@zanarolli.com':   {senha:'zan@2026', nome:'Tania',   nivel:'administrador', paineis:null},
-  'gabriel@zanarolli.com': {senha:'zan@2026', nome:'Gabriel', nivel:'administrador', paineis:null},
-  'thais@zanarolli.com':   {senha:'apt@2026', nome:'Thais',   nivel:'restrito',      paineis:['p025apt']}
+  'zanarolli.gabriel@gmail.com': {senha:'Galicia20262027', nome:'Gabriel', nivel:'administrador', paineis:null},
+  'pandelaluna@gmail.com':        {senha:'Guarda&2025',    nome:'Renato',  nivel:'administrador', paineis:null},
+  'taniazanarolli@gmail.com':     {senha:'Aurora0811',     nome:'Tania',   nivel:'administrador', paineis:null},
+  'thais@zanarolli.com':          {senha:'apt@2026',       nome:'Thais',   nivel:'restrito',      paineis:['p025apt']}
 };
 
 function _verificarSessao(){
@@ -3877,7 +3877,7 @@ function enviarEmailAlertas(){
   });
 
   const subject = `Consolidado Zanarolli — Alertas ${new Date().toLocaleDateString('pt-BR')}`;
-  const config = { email: 'gabrielrzan@gmail.com' };
+  const config = { email: 'zanarolli.gabriel@gmail.com' };
   window.open(`mailto:${config.email}?subject=${encodeURIComponent(subject)}&body=${body}`);
 
   // Registrar envio
