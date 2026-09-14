@@ -357,6 +357,29 @@ body.tema-claro #bottom-nav { background:#f0f2f8; border-color:#d0d5e8; }
   #bn-mais-drawer{display:none!important}
 }
 
+
+/* ── SIDEBAR MINI — tablet landscape 768-1023px ─── */
+@media(min-width:768px) and (max-width:1023px){
+  .sidebar{width:60px;overflow:visible}
+  .sb-label,.sb-btn span:not(.badge),.pip{display:none}
+  .sb-badge{display:block;font-size:10px;margin:0 auto;padding:2px 4px}
+  .sb-btn{justify-content:center;padding:.5rem;position:relative}
+  .sb-btn::after{
+    content:attr(data-tooltip);
+    position:absolute;left:68px;top:50%;transform:translateY(-50%);
+    background:var(--sf);border:1px solid var(--bd);border-radius:6px;
+    padding:4px 10px;font-size:11px;white-space:nowrap;color:var(--t1);
+    display:none;z-index:200;box-shadow:4px 4px 12px rgba(0,0,0,.3);
+  }
+  .sb-btn:hover::after{display:block}
+  .sb-sep{margin:.25rem .5rem}
+  .main{padding:1rem}
+}
+@media(min-width:1024px){
+  .sidebar{width:var(--sidebar-w)}
+  .sb-label,.sb-btn span:not(.badge),.pip{display:inline}
+}
+
 </style>
 </head>
 
@@ -460,6 +483,7 @@ body.tema-claro #bottom-nav { background:#f0f2f8; border-color:#d0d5e8; }
   <button class="sb-btn" onclick="show('pprem',this)"><span class="badge">09</span>Premissas</button>
   <button class="sb-btn" onclick="show('pcc',this)"><span class="badge">10</span>Simulador</button>
   <button class="sb-btn" onclick="show('plogs',this)"><span class="badge">📋</span>Logs</button>
+  <button class="sb-btn" id="btn-admin-users" style="display:none" onclick="show('padmin',this)"><span class="badge">👥</span>Usuários</button>
 </nav>
 <main class="main">
 
@@ -2265,6 +2289,30 @@ body.tema-claro #bottom-nav { background:#f0f2f8; border-color:#d0d5e8; }
 </div>
 </section>
 
+
+<section class="panel" id="padmin">
+<div class="panel-hd">👥 Gerenciar usuários · somente administrador</div>
+<div style="margin-bottom:.75rem">
+  <div style="font-size:11px;color:var(--t3);margin-bottom:.5rem">
+    Usuários com acesso ao Consolidado Zanarolli.
+    Senhas são alteradas diretamente nesta tela.
+  </div>
+</div>
+<div class="tbl-wrap">
+<table class="tbl">
+  <thead><tr><th>Nome</th><th>Email</th><th>Nível</th><th>Painéis</th><th>Senha</th><th></th></tr></thead>
+  <tbody id="admin-users-tbody">
+    <tr><td colspan="6" style="color:var(--t3);text-align:center">Carregando...</td></tr>
+  </tbody>
+</table>
+</div>
+<div style="margin-top:.75rem">
+  <button onclick="adminAdicionarUsuario()" 
+    style="background:var(--bl);color:#fff;border:none;border-radius:7px;padding:.45rem .9rem;font-size:11px;font-weight:600;cursor:pointer">
+    + Convidar usuário
+  </button>
+</div>
+</section>
 </main></div>
 <script>
 // ── Navegação sidebar ─────────────────────────────────────────
@@ -3062,10 +3110,11 @@ document.addEventListener('click', e => {
 const _logs = [];
 
 function _registrarLog(painel, campo, anterior, novo, descricao='') {
+  const usuario_nome = _estado?.usuarioLogado?.nome || 'sistema';
   const agora = new Date();
   const data  = agora.toLocaleDateString('pt-BR');
   const hora  = agora.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  const entry = { data, hora, painel, campo, anterior, novo, descricao };
+  const entry = { data, hora, painel, campo, anterior, novo, descricao, usuario: usuario_nome };
   _logs.unshift(entry); // mais recente primeiro
 
   // Atualizar tabela de logs
@@ -3081,7 +3130,7 @@ function _registrarLog(painel, campo, anterior, novo, descricao='') {
     <td style="font-size:11px">${campo}${descricao ? ' · <span style="color:var(--t3)">' + descricao + '</span>' : ''}</td>
     <td style="font-size:11px;color:var(--t3)">${anterior || '—'}</td>
     <td style="font-size:11px;color:var(--gn);font-weight:600">${novo}</td>
-    <td style="font-size:10px;color:var(--t3)">Gabriel/Thais</td>
+    <td style="font-size:10px;color:var(--t3)">${usuario_nome}</td>
   `;
   tbody.insertBefore(tr, tbody.firstChild);
 
@@ -3279,6 +3328,12 @@ function _iniciarApp(){
 
   // Carregar painel 02.5
   _carregarApartamento();
+  // Mostrar botões admin
+  setTimeout(_mostrarBotoesAdmin, 400);
+  // Adicionar card Gabriel no Resumo
+  setTimeout(_adicionarCardGabriel, 500);
+  // Carregar logs do SB se painel ativo
+  setTimeout(_carregarLogsDoSB, 800);
 }
 
 // ── HEARTBEAT ─────────────────────────────────────────────────
@@ -3709,4 +3764,311 @@ document.addEventListener('DOMContentLoaded', ()=>{
   }
 });
 </script>
+
+// ── R3: Parcelas de acordos → Pendências Financeiras ─────────
+async function _carregarParcelasAcordos(){
+  const tbody = document.getElementById('pend-fin-body');
+  if(!tbody) return;
+  try{
+    const acordos = await _db2.get('acordos','select=*&status=eq.ativo');
+    if(!acordos) return;
+    const hoje = new Date();
+    const mesAtual = hoje.getMonth();
+    const anoAtual = hoje.getFullYear();
+
+    acordos.forEach(ac => {
+      // Verificar se a parcela do mês já está na tabela
+      const vencDia = ac.dia_vencimento;
+      const vencDate = new Date(anoAtual, mesAtual, vencDia);
+      const vencStr = vencDate.toLocaleDateString('pt-BR');
+      const jaExiste = tbody.textContent.includes(ac.nome?.substring(0,15)||'');
+      if(jaExiste) return;
+
+      // Adicionar linha automaticamente
+      const tr = document.createElement('tr');
+      const dias = Math.ceil((vencDate - hoje) / 864e5);
+      const statusCls = dias < 0 ? 'bad-row' : 'warn-row';
+      const statusTag = dias < 0
+        ? '<span class="pl plr">⚠ vencida</span>'
+        : `<span class="pl pla">⏳ ${vencStr}</span>`;
+
+      tr.className = statusCls;
+      tr.dataset.pendId = `ac-${ac.id}`;
+      tr.innerHTML = `
+        <td><span class="cd">${ac.codigo}</span></td>
+        <td>${ac.nome} · parc. ${ac.parcela_atual}</td>
+        <td>${vencStr}</td>
+        <td>Itaú CC direto</td>
+        <td class="r warn">R$ ${Number(ac.valor_mensal).toLocaleString('pt-BR',{minimumFractionDigits:2})}</td>
+        <td>${statusTag}</td>
+        <td><button class="btn-edit-pend" onclick="pagarAcordoPend(${ac.id},'${ac.codigo}')" title="Marcar pago">✓</button></td>`;
+      tbody.appendChild(tr);
+    });
+  } catch(e){ console.warn('R3:', e); }
+}
+
+async function pagarAcordoPend(id, codigo){
+  _confirmar(`Marcar parcela do acordo ${codigo} como paga?`, async ()=>{
+    const ac = (await _db2.get('acordos',`select=*&id=eq.${id}`))?.[0];
+    if(!ac) return;
+    await _db2.patch('acordos', id, {
+      parcelas_pagas: ac.parcelas_pagas+1,
+      parcela_atual: ac.parcela_atual+1,
+      saldo_devedor: Math.max(0, ac.saldo_devedor - ac.valor_mensal),
+      atualizado_em: new Date().toISOString()
+    });
+    await _db2.post('conta_corrente',{
+      data: new Date().toISOString().slice(0,10),
+      descricao: `${ac.nome} · parc. ${ac.parcela_atual}`,
+      valor: -ac.valor_mensal, tipo:'ACORDO',
+      centro_custo: ac.codigo, realizado: true
+    });
+    _registrarLog(ac.codigo, 'Parcela', ac.parcela_atual-1+'', ac.parcela_atual+'');
+    _toast2(`Parc. ${ac.parcela_atual} paga ✓`);
+    document.querySelector(`[data-pend-id="ac-${id}"]`)?.remove();
+  });
+}
+
+// ── R4: Déficit Gabriel → Resumo ─────────────────────────────
+async function _carregarDeficitGabriel(){
+  try{
+    const gastos = await _db2.get('contas_pagar','select=valor,status&centro_custo=ilike.*05*');
+    if(!gastos) return;
+    const total = gastos.reduce((s,g)=>s+(g.status!=='pago'?Number(g.valor):0),0);
+    const el = document.getElementById('resumo-deficit-gabriel');
+    if(el) el.textContent = 'R$ '+total.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  } catch(e){}
+}
+
+// ── R6: Verificar se alerta já foi enviado hoje ───────────────
+async function _jaNotificadoHoje(contaId, tipo){
+  try{
+    const hoje = new Date().toISOString().slice(0,10);
+    const res = await _db2.get('alertas_enviados',
+      `select=id&conta_id=eq.${contaId}&tipo=eq.${tipo}&notificado_em=eq.${hoje}`);
+    return res && res.length > 0;
+  } catch(e){ return false; }
+}
+
+async function _registrarNotificacao(contaId, tipo, descricao){
+  const hoje = new Date().toISOString().slice(0,10);
+  try{
+    await _db2.post('alertas_enviados',{
+      conta_id: contaId, tipo, descricao,
+      notificado_em: hoje,
+      usuario_nome: _estado?.usuarioLogado?.nome || 'sistema'
+    });
+  } catch(e){}
+}
+
+// Função para abrir Gmail com resumo de alertas
+function enviarEmailAlertas(){
+  const itens = document.querySelectorAll('.alerta-item');
+  if(!itens.length){ _toast2('Nenhum alerta ativo','ok'); return; }
+
+  let body = 'Consolidado Zanarolli — Alertas do dia ' + new Date().toLocaleDateString('pt-BR') + '%0A%0A';
+  itens.forEach(item=>{
+    const titulo = item.querySelector('.alerta-titulo')?.textContent||'';
+    const sug = item.querySelector('.alerta-sugestao')?.textContent||'';
+    body += `• ${titulo}%0A  ${sug}%0A%0A`;
+  });
+
+  const subject = `Consolidado Zanarolli — Alertas ${new Date().toLocaleDateString('pt-BR')}`;
+  const config = { email: 'gabrielrzan@gmail.com' };
+  window.open(`mailto:${config.email}?subject=${encodeURIComponent(subject)}&body=${body}`);
+
+  // Registrar envio
+  _db2.post('alertas_enviados',{
+    tipo:'resumo_alertas',
+    descricao:`${itens.length} alertas enviados`,
+    notificado_em: new Date().toISOString().slice(0,10),
+    usuario_nome: _estado?.usuarioLogado?.nome||'sistema'
+  }).catch(()=>{});
+  _registrarLog('Gmail','Alertas enviados','-',`${itens.length} alertas`);
+}
+
+// ── R7: Pagamento fatura → lançamento automático CC ──────────
+async function registrarPagamentoFatura(tipo, valor, mes){
+  // tipo: 'NUBANK' ou 'ITAU'
+  const desc = tipo==='NUBANK'
+    ? `Fatura Nubank ${mes}`
+    : `Fatura Itaú ${mes}`;
+  try{
+    await _db2.post('conta_corrente',{
+      data: new Date().toISOString().slice(0,10),
+      descricao: desc,
+      valor: -Math.abs(valor),
+      tipo: 'CARTÃO',
+      centro_custo: tipo==='NUBANK'?'00.1.2':'00.2.2',
+      realizado: true
+    });
+    _registrarLog(`00.${tipo==='NUBANK'?'1':'2'} Cartão`, 'Fatura paga', '-', `R$ ${Number(valor).toLocaleString('pt-BR',{minimumFractionDigits:2})} · ${mes}`);
+    _toast2(`Fatura ${tipo} ${mes} lançada no CC ✓`);
+  } catch(e){ console.warn('R7:', e); }
+}
+
+// ── C3: Calendário — carregar eventos do banco ────────────────
+async function _carregarEventosCalendario(){
+  try{
+    const eventos = await _db2.get('vw_calendario','select=*&order=data_evento.asc&limit=100');
+    if(!eventos) return;
+
+    eventos.forEach(ev=>{
+      const data = new Date(ev.data_evento+'T12:00');
+      const dia = data.getDate();
+      const mes = data.getMonth();
+      const ano = data.getFullYear();
+
+      // Encontrar o div do dia no calendário ativo
+      const calDias = document.querySelectorAll('.cal-day');
+      calDias.forEach(calDiv=>{
+        const numEl = calDiv.querySelector('.cal-num');
+        if(numEl && parseInt(numEl.textContent)===dia){
+          // Verificar se é o mês correto pelo contexto
+          const cor = ev.tipo_cor==='entrada'?'ev-gn':ev.tipo_cor==='vencido'?'ev-rd':'ev-am';
+          const brl = v => 'R$ '+Math.abs(Number(v)).toLocaleString('pt-BR',{minimumFractionDigits:0});
+          // Não duplicar eventos já existentes
+          const jaExiste = Array.from(calDiv.querySelectorAll('.cal-ev'))
+            .some(el=>el.textContent.includes(ev.descricao?.substring(0,10)||''));
+          if(!jaExiste){
+            const ev_el = document.createElement('div');
+            ev_el.className = `cal-ev ${cor}`;
+            ev_el.textContent = `${ev.descricao?.substring(0,15)||''}${ev.valor?` ${brl(ev.valor)}`:''}`;
+            calDiv.appendChild(ev_el);
+          }
+        }
+      });
+    });
+  } catch(e){ console.warn('C3:', e); }
+}
+
+// ── F3: Histórico faturas Nubank ─────────────────────────────
+async function _carregarFaturasNubank(){
+  const seletor = document.getElementById('nb-fatura-seletor');
+  if(!seletor) return;
+  try{
+    const faturas = await _db2.get('faturas_nubank','select=*&order=id.desc&limit=12');
+    if(!faturas) return;
+    seletor.innerHTML = `<option value="">— Selecionar fatura —</option>` +
+      faturas.map(f=>`<option value="${f.id}" ${f.status==='aberta'?'selected':''}>
+        ${f.mes_referencia} · R$ ${Number(f.valor_total).toLocaleString('pt-BR',{minimumFractionDigits:2})} · ${f.status}
+      </option>`).join('');
+  } catch(e){}
+}
+
+// ── ADMIN USUÁRIOS ───────────────────────────────────────────
+function _carregarPainelAdmin(){
+  const tbody = document.getElementById('admin-users-tbody');
+  if(!tbody) return;
+  const usuarios = Object.entries(_USUARIOS);
+  tbody.innerHTML = usuarios.map(([email, u])=>`
+    <tr>
+      <td style="font-weight:600">${u.nome}</td>
+      <td style="font-size:11px;color:var(--t2)">${email}</td>
+      <td><span class="pl ${u.nivel==='administrador'?'plb':u.nivel==='restrito'?'pla':'plg'}">${u.nivel}</span></td>
+      <td style="font-size:10px;color:var(--t3)">${u.paineis?u.paineis.join(', '):'Todos'}</td>
+      <td><button onclick="adminAlterarSenha('${email}')"
+        style="background:var(--sf2);border:1px solid var(--bd);color:var(--t2);border-radius:5px;padding:2px 8px;font-size:10px;cursor:pointer">
+        Alterar senha
+      </button></td>
+      <td></td>
+    </tr>`).join('');
+}
+
+function adminAlterarSenha(email){
+  const novaSenha = prompt(`Nova senha para ${email}:`);
+  if(!novaSenha || novaSenha.length < 6){
+    alert('Senha deve ter pelo menos 6 caracteres.');
+    return;
+  }
+  if(_USUARIOS[email]){
+    _USUARIOS[email].senha = novaSenha;
+    _toast2(`Senha de ${_USUARIOS[email].nome} alterada ✓`);
+    _registrarLog('Admin', 'Senha alterada', '-', email);
+  }
+}
+
+function adminAdicionarUsuario(){
+  const nome = prompt('Nome do usuário:'); if(!nome) return;
+  const email = prompt('Email:'); if(!email) return;
+  const senha = prompt('Senha inicial (mínimo 6 caracteres):'); if(!senha||senha.length<6) return;
+  const nivel = prompt('Nível (administrador/editor/leitor/restrito):','editor')||'editor';
+  const paineis = nivel==='restrito'?prompt('Painéis permitidos (ex: p025apt):'):null;
+
+  _USUARIOS[email] = {
+    nome, senha, nivel,
+    paineis: paineis ? paineis.split(',').map(p=>p.trim()) : null
+  };
+  _carregarPainelAdmin();
+  _toast2(`Usuário ${nome} adicionado ✓`);
+  _registrarLog('Admin', 'Usuário adicionado', '-', `${nome} (${email})`);
+
+  // Simular envio de convite
+  const subject = encodeURIComponent(`Acesso ao Consolidado Zanarolli — ${nome}`);
+  const body = encodeURIComponent(
+    `Olá ${nome},\n\nVocê foi convidado para acessar o Consolidado Zanarolli.\n\n` +
+    `URL: https://gabrielrzan.github.io/zanarolli-financeiro/\n` +
+    `Email: ${email}\nSenha inicial: ${senha}\n\n` +
+    `Recomendamos alterar sua senha após o primeiro acesso.`
+  );
+  window.open(`mailto:${email}?subject=${subject}&body=${body}`);
+}
+
+// ── HOOKS NOS EVENTOS EXISTENTES ────────────────────────────
+// Ao abrir painel, executar hooks específicos
+const _showOriginal = window.show;
+window.show = function(id, btn){
+  if(_showOriginal) _showOriginal(id, btn);
+  // Hooks por painel
+  if(id==='pendencias') setTimeout(()=>{ _carregarParcelasAcordos(); }, 300);
+  if(id==='plogs') setTimeout(()=>{ _carregarLogsDoSB(); }, 300);
+  if(id==='pcal') setTimeout(()=>{ _carregarEventosCalendario(); }, 500);
+  if(id==='padmin') setTimeout(()=>{ _carregarPainelAdmin(); }, 200);
+  if(id==='p00nb') setTimeout(()=>{ _carregarFaturasNubank(); }, 300);
+  if(id==='resumo') setTimeout(()=>{ _carregarDeficitGabriel(); }, 400);
+};
+
+// Carregar logs do Supabase no painel de logs
+async function _carregarLogsDoSB(){
+  const tbody = document.getElementById('logs-tbody');
+  if(!tbody) return;
+  try{
+    const logs = await _db2.get('logs','select=*&order=criado_em.desc&limit=50');
+    if(!logs || !logs.length) return;
+    const dtBR = d => d ? new Date(d).toLocaleString('pt-BR') : '—';
+    tbody.innerHTML = logs.map(l=>`
+      <tr>
+        <td style="white-space:nowrap;font-size:10px;color:var(--t3)">${dtBR(l.criado_em)}</td>
+        <td><span class="pl plb" style="font-size:9px">${l.painel||'—'}</span></td>
+        <td style="font-size:11px">${l.campo||'—'}${l.descricao?` · <span style="color:var(--t3)">${l.descricao}</span>`:''}</td>
+        <td style="font-size:11px;color:var(--t3)">${l.valor_anterior||'—'}</td>
+        <td style="font-size:11px;color:var(--gn);font-weight:600">${l.valor_novo||'—'}</td>
+        <td style="font-size:10px;color:var(--t3)">${l.usuario_nome||'—'}</td>
+      </tr>`).join('');
+  } catch(e){}
+}
+
+// Mostrar botão admin apenas para administradores
+function _mostrarBotoesAdmin(){
+  const u = _estado?.usuarioLogado;
+  if(u && u.nivel === 'administrador'){
+    const btnAdmin = document.getElementById('btn-admin-users');
+    if(btnAdmin) btnAdmin.style.display='';
+  }
+}
+
+// Adicionar card Gabriel no Resumo dinamicamente
+function _adicionarCardGabriel(){
+  const grid = document.getElementById('resumo-metrics') || document.querySelector('.metric-grid');
+  if(!grid) return;
+  if(document.getElementById('resumo-deficit-gabriel')) return;
+  const card = document.createElement('div');
+  card.className='metric m-rd';
+  card.innerHTML=`
+    <div class="metric-lbl">CC 05 · Gabriel</div>
+    <div class="metric-val" style="color:var(--rd)" id="resumo-deficit-gabriel">R$ 465,83</div>
+    <div class="metric-sub">déficit · pendências viagem</div>`;
+  grid.appendChild(card);
+}
+
 </body></html>
