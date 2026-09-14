@@ -4020,7 +4020,7 @@ const _showOriginal = window.show;
 window.show = function(id, btn){
   if(_showOriginal) _showOriginal(id, btn);
   // Hooks por painel
-  if(id==='pendencias') setTimeout(()=>{ _carregarParcelasAcordos(); }, 300);
+  if(id==='pendencias') setTimeout(()=>{ _carregarParcelasAcordos(); _carregarPendenciasOperacionais(); }, 300);
   if(id==='plogs') setTimeout(()=>{ _carregarLogsDoSB(); }, 300);
   if(id==='pcal') setTimeout(()=>{ _carregarEventosCalendario(); }, 500);
   if(id==='padmin') setTimeout(()=>{ _carregarPainelAdmin(); }, 200);
@@ -4069,6 +4069,107 @@ function _adicionarCardGabriel(){
     <div class="metric-val" style="color:var(--rd)" id="resumo-deficit-gabriel">R$ 465,83</div>
     <div class="metric-sub">déficit · pendências viagem</div>`;
   grid.appendChild(card);
+}
+
+
+// ── C5: Pendências Operacionais — carregar do Supabase ────────
+async function _carregarPendenciasOperacionais(){
+  const container = document.querySelector('.opal');
+  if(!container) return;
+
+  try{
+    const pends = await _db2.get('pendencias_operacionais',
+      'select=*&status=neq.resolvido&order=prioridade.asc,criado_em.asc');
+    if(!pends || !pends.length) return;
+
+    // Agrupar por categoria
+    const grupos = {};
+    pends.forEach(p=>{
+      if(!grupos[p.categoria]) grupos[p.categoria] = [];
+      grupos[p.categoria].push(p);
+    });
+
+    const prioIcon = {urgente:'🔴', normal:'🟡', baixa:'🔵'};
+    const statusCls = {pendente:'ops', em_andamento:'opw', resolvido:'opg'};
+
+    let html = `<div class="optt">📋 Pendências operacionais · ${new Date().toLocaleDateString('pt-BR')}</div>`;
+
+    Object.entries(grupos).forEach(([cat, itens])=>{
+      html += `<div class="op-sub">${cat}</div>`;
+      itens.forEach(p=>{
+        const icon = prioIcon[p.prioridade]||'🔵';
+        html += `<div class="opi" data-pend-op-id="${p.id}">
+          <span class="opl">
+            ${icon} ${p.centro_custo?`<span class="cd">${p.centro_custo}</span>`:''}
+            ${p.descricao}
+            ${p.prazo?`<span style="color:var(--t3);font-size:9px"> · prazo: ${new Date(p.prazo+'T12:00').toLocaleDateString('pt-BR')}</span>`:''}
+          </span>
+          <span style="display:flex;gap:4px;align-items:center">
+            <span class="${statusCls[p.status]||'ops'}">${p.status||'pendente'}</span>
+            <button onclick="resolverPendOp(${p.id})" 
+              style="background:var(--gn);color:#052e16;border:none;border-radius:4px;padding:1px 6px;font-size:9px;cursor:pointer;font-weight:700">✓</button>
+            <button onclick="editarPendOp(${p.id},'${p.descricao.replace(/'/g,"\'")}')"
+              style="background:var(--sf2);border:1px solid var(--bd);color:var(--t3);border-radius:4px;padding:1px 5px;font-size:9px;cursor:pointer">✏</button>
+          </span>
+        </div>`;
+      });
+    });
+
+    // Botão adicionar
+    html += `<div style="margin-top:.5rem">
+      <button onclick="adicionarPendOp()"
+        style="background:var(--bl);color:#fff;border:none;border-radius:6px;padding:.3rem .7rem;font-size:10px;font-weight:600;cursor:pointer">
+        + Adicionar tarefa
+      </button>
+    </div>`;
+
+    container.innerHTML = html;
+  } catch(e){ console.warn('PendOp:', e); }
+}
+
+async function resolverPendOp(id){
+  _confirmar('Marcar tarefa como resolvida?', async ()=>{
+    await _db2.patch('pendencias_operacionais', id, {
+      status:'resolvido', atualizado_em: new Date().toISOString()
+    });
+    _registrarLog('Pendências Op.', 'Status', 'pendente', 'resolvido');
+    _toast2('Tarefa resolvida ✓');
+    _carregarPendenciasOperacionais();
+  });
+}
+
+async function editarPendOp(id, descAtual){
+  const nova = prompt('Editar descrição:', descAtual);
+  if(!nova || nova === descAtual) return;
+  const prazo = prompt('Prazo (AAAA-MM-DD) ou deixe vazio:', '');
+  const obs = prompt('Observação:', '');
+  await _db2.patch('pendencias_operacionais', id, {
+    descricao: nova,
+    ...(prazo ? {prazo} : {}),
+    ...(obs ? {observacao: obs} : {}),
+    atualizado_em: new Date().toISOString()
+  });
+  _registrarLog('Pendências Op.', 'Descrição', descAtual, nova);
+  _toast2('Tarefa atualizada ✓');
+  _carregarPendenciasOperacionais();
+}
+
+async function adicionarPendOp(){
+  const desc = prompt('Descrição da tarefa:'); if(!desc) return;
+  const cat = prompt('Categoria (Izzo 351/Acordos/IPTU/CDB/Dracenas/Apartamento/Outros):', 'Outros')||'Outros';
+  const cc = prompt('Centro de Custo (ex: 02.1):', '');
+  const prio = prompt('Prioridade (urgente/normal/baixa):', 'normal')||'normal';
+  const prazo = prompt('Prazo (AAAA-MM-DD) ou vazio:', '')||null;
+
+  await _db2.post('pendencias_operacionais', {
+    descricao: desc, categoria: cat,
+    centro_custo: cc||null, prioridade: prio,
+    prazo: prazo||null, status: 'pendente',
+    criado_em: new Date().toISOString()
+  });
+  _registrarLog('Pendências Op.', 'Nova tarefa', '-', desc);
+  _toast2('Tarefa adicionada ✓');
+  _carregarPendenciasOperacionais();
 }
 
 </body></html>
