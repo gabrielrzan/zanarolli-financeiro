@@ -383,8 +383,11 @@ body.tema-claro #bottom-nav { background:#f0f2f8; border-color:#d0d5e8; }
 </style>
 </head>
 
+
+<body>
+
 <!-- TELA DE LOGIN -->
-<div id="tela-login" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center">
+<div id="tela-login" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center">
   <div style="background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:2rem;width:min(380px,92vw);box-shadow:0 24px 64px rgba(0,0,0,.5)">
     <div style="text-align:center;margin-bottom:1.5rem">
       <div style="font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.35rem">Planejamento financeiro familiar</div>
@@ -418,9 +421,7 @@ body.tema-claro #bottom-nav { background:#f0f2f8; border-color:#d0d5e8; }
   </div>
 </div>
 
-<body style="display:none" id="app-body">
-
-<header class="site-header">
+<div id="app-conteudo" style="display:none"><header class="site-header">
   <div class="hdr-brand">
     <div class="hdr-eye">Planejamento financeiro familiar</div>
     <div class="hdr-title">Consolidado Zanarolli</div>
@@ -3162,6 +3163,8 @@ function _atualizarPosicao(data) {
 </script>
 
 
+</div><!-- /app-conteudo -->
+
 <!-- BOTTOM NAVIGATION — mobile ≤767px -->
 <nav id="bottom-nav" style="display:none;position:fixed;bottom:0;left:0;right:0;height:58px;background:#0a0d14;border-top:1px solid var(--bd);z-index:88;align-items:center;justify-content:space-around;padding:0 .25rem">
   <button class="bn-btn active" onclick="show('resumo',this);bnActive(this)" data-panel="resumo">
@@ -3254,8 +3257,8 @@ function _verificarSessao(){
 function _mostrarLogin(){
   const login = document.getElementById('tela-login');
   if(login) login.style.display='flex';
-  const app = document.getElementById('app-body');
-  if(app) app.style.display='none';
+  const appC = document.getElementById('app-conteudo');
+  if(appC) appC.style.display='none';
 }
 
 function fazerLogin(){
@@ -3288,8 +3291,8 @@ function fazerLogout(){
 }
 
 function _iniciarApp(){
-  const app = document.getElementById('app-body');
-  if(app) app.style.display='block';
+  const appC = document.getElementById('app-conteudo');
+  if(appC) appC.style.display='block';
 
   // Exibir nome no header
   const nomeEl = document.getElementById('hdr-usuario-nome');
